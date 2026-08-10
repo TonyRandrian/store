@@ -1,6 +1,6 @@
 ﻿namespace Store.Domain.Entities
 {
-    internal class Category
+    public class Category
     {
 
         public Category(

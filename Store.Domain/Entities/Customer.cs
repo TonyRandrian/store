@@ -1,6 +1,6 @@
 ﻿namespace Store.Domain.Entities
 {
-    internal class Customer
+    public class Customer
     {
 
         public Customer(int id, string name, List<Invoice>? invoices = null)

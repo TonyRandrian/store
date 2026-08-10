@@ -1,6 +1,6 @@
 ﻿namespace Store.Domain.Entities
 {
-    internal class Product
+    public class Product
     {
 
         public Product(int id, string name, Category? category, List<Supplier>? suppliers = null)

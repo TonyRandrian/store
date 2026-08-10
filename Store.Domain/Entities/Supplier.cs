@@ -1,8 +1,8 @@
 ﻿namespace Store.Domain.Entities
 {
-    internal class Supplier
+    public class Supplier
     {
-        
+
         public Supplier(int id, string name, List<Product>? products)
         {
             Id = id;
