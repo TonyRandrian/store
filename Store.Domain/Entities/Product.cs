@@ -3,11 +3,12 @@
     internal class Product
     {
 
-        public Product(int id, string name, Category? category)
+        public Product(int id, string name, Category? category, List<Supplier>? suppliers = null)
         {
             Id = id;
             Name = name;
             Category = category;
+            Suppliers = suppliers ?? [];
         }
 
         public int Id
@@ -44,6 +45,13 @@
                 ArgumentOutOfRangeException.ThrowIfLessThan(value, 0, "Product's price should not be negative");
                 field = value;
             }
+        }
+
+        public List<Supplier> Suppliers
+        {
+            get;
+
+            set;
         }
     }
 }
