@@ -3,9 +3,8 @@
     public class Supplier
     {
 
-        public Supplier(int id, string name, List<Product>? products)
+        public Supplier(string name, List<Product>? products)
         {
-            Id = id;
             Name = name;
             Products = products ?? [];
         }

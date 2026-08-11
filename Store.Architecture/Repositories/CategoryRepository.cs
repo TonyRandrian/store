@@ -20,16 +20,20 @@ namespace Store.Infrastructure.Repositories
             return await Context.Categories.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task AddAsync(Category category)
+        public async Task<Category> AddAsync(Category category)
         {
-            Context.Categories.Add(category);
+            await Context.Categories.AddAsync(category);
             await Context.SaveChangesAsync();
+
+            return category;
         }
 
-        public async Task UpdateAsync(Category category)
+        public async Task<Category> UpdateAsync(Category category)
         {
             Context.Categories.Update(category);
             await Context.SaveChangesAsync();
+
+            return category;
         }
 
         public async Task DeleteAsync(int id)

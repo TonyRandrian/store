@@ -3,9 +3,8 @@
     public class Customer
     {
 
-        public Customer(int id, string name, List<Invoice>? invoices = null)
+        public Customer(string name, List<Invoice>? invoices = null)
         {
-            Id = id;
             Name = name;
             Invoices = invoices ?? [];
         }

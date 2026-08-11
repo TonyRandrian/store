@@ -6,8 +6,8 @@ namespace Store.Application.Interfaces
     {
         public Task<List<Invoice>> GetAllAsync();
         public Task<Invoice?> GetByIdAsync(int id);
-        public Task AddAsync(Invoice invoice);
-        public Task UpdateAsync(Invoice invoice);
+        public Task<Invoice> AddAsync(Invoice invoice);
+        public Task<Invoice> UpdateAsync(Invoice invoice);
         public Task DeleteAsync(int id);
     }
 }

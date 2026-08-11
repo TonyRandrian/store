@@ -6,8 +6,8 @@ namespace Store.Application.Interfaces
     {
         public Task<List<Supplier>> GetAllAsync();
         public Task<Supplier?> GetByIdAsync(int id);
-        public Task AddAsync(Supplier supplier);
-        public Task UpdateAsync(Supplier supplier);
+        public Task<Supplier> AddAsync(Supplier supplier);
+        public Task<Supplier> UpdateAsync(Supplier supplier);
         public Task DeleteAsync(int id);
     }
 }

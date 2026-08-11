@@ -3,9 +3,8 @@
     public class Invoice
     {
 
-        public Invoice(int id, string reference, Customer customer, decimal total)
+        public Invoice(string reference, Customer customer, decimal total)
         {
-            Id = id;
             Reference = reference;
             Customer = customer;
             Total = total;

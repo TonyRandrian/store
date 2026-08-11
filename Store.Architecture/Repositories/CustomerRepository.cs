@@ -20,16 +20,20 @@ namespace Store.Infrastructure.Repositories
             return await Context.Customers.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task AddAsync(Customer customer)
+        public async Task<Customer> AddAsync(Customer customer)
         {
-            Context.Customers.Add(customer);
+            await Context.Customers.AddAsync(customer);
             await Context.SaveChangesAsync();
+
+            return customer;
         }
 
-        public async Task UpdateAsync(Customer customer)
+        public async Task<Customer> UpdateAsync(Customer customer)
         {
             Context.Customers.Update(customer);
             await Context.SaveChangesAsync();
+
+            return customer;
         }
 
         public async Task DeleteAsync(int id)

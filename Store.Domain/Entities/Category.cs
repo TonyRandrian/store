@@ -4,13 +4,11 @@
     {
 
         public Category(
-            int id,
             string name,
             Category? parent = null,
             List<Product>? products = null,
             List<Category>? children = null)
         {
-            Id = id;
             Name = name;
             Parent = parent;
             Products = products ?? [];
