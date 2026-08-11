@@ -5,10 +5,10 @@ using Store.Infrastructure.Persistence;
 
 namespace Store.Infrastructure.Repositories
 {
-    public class CategoryRepository : ICategoryRepository
+    public class CategoryRepository(StoreDbContext context) : ICategoryRepository
     {
-        private readonly StoreDbContext Context;
-        
+        private readonly StoreDbContext Context = context;
+
 
         public async Task<List<Category>> AGetAll()
         {
