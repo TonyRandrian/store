@@ -3,7 +3,7 @@
     public class Supplier
     {
 
-        public Supplier(string name, List<Product>? products)
+        public Supplier(string name, List<Product>? products = null)
         {
             Name = name;
             Products = products ?? [];
