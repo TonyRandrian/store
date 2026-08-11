@@ -7,7 +7,7 @@ namespace Store.Application.UseCases.Categories
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
 
-        public async Task Excecute(int id)
+        public async Task Execute(int id)
         {
             await CategoryRepository.DeleteAsync(id);
         }

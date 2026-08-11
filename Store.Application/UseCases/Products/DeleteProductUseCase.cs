@@ -6,7 +6,7 @@ namespace Store.Application.UseCases.Products
     {
         private readonly IProductRepository ProductRepository = productRepository;
 
-        public async Task Excecute(int id)
+        public async Task Ececute(int id)
         {
             await ProductRepository.DeleteAsync(id);
         }

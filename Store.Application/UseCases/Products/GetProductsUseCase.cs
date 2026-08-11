@@ -7,7 +7,7 @@ namespace Store.Application.UseCases.Products
     {
         private readonly IProductRepository ProductRepository = productRepository;
 
-        public async Task<List<Product>> Excecute()
+        public async Task<List<Product>> Execute()
         {
             return await ProductRepository.GetAllAsync();
         }

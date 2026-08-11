@@ -8,7 +8,7 @@ namespace Store.Application.UseCases.Categories
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
 
-        public async Task<List<Category>> Excecute()
+        public async Task<List<Category>> Execute()
         {
             return await CategoryRepository.GetAllAsync();
         }

@@ -7,7 +7,7 @@ namespace Store.Application.UseCases.Categories
     {
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
-        public async Task<Category> Excecute(string name, int categoryParentId)
+        public async Task<Category> Execute(string name, int categoryParentId)
         {
             Category? categoryParent = await CategoryRepository.GetByIdAsync(categoryParentId);
 
