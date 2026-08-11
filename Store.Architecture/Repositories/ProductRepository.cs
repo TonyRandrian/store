@@ -34,7 +34,7 @@ namespace Store.Infrastructure.Repositories
 
         public async Task ADelete(int id)
         {
-            Product? product = await Context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            Product? product = await AGetById(id);
 
             if (product == null)
                 return;
