@@ -23,8 +23,7 @@ namespace Store.Application.UseCases.Products
             product.Category = category;
 
             // persistence
-            await ProductRepository.UpdateAsync(product);
-            return product;
+            return await ProductRepository.UpdateAsync(product);
         }
     }
 }

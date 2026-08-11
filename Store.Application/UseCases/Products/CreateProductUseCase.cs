@@ -17,9 +17,7 @@ namespace Store.Application.UseCases.Products
 
             // persistence
             Product product = new(name, price, category);
-            await ProductRepository.AddAsync(product);
-
-            return product;
+            return await ProductRepository.AddAsync(product);
         }
     }
 }
