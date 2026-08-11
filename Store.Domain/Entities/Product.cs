@@ -3,12 +3,13 @@
     public class Product
     {
 
-        public Product(int id, string name, Category? category, List<Supplier>? suppliers = null)
+        public Product(int id, string name, decimal price, Category? category, List<Supplier>? suppliers = null)
         {
             Id = id;
             Name = name;
             Category = category;
             Suppliers = suppliers ?? [];
+            Price = price;
         }
 
         public Product()
