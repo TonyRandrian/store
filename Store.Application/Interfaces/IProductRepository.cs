@@ -4,10 +4,10 @@ namespace Store.Application.Interfaces
 {
     public interface IProductRepository
     {
-        public Task<List<Product>> AGetAll();
-        public Task<Product?> AGetById(int id);
-        public Task AAdd(Product product);
-        public Task AUpdate(Product product);
-        public Task ADelete(int id);
+        public Task<List<Product>> GetAllAsync();
+        public Task<Product?> GetByIdAsync(int id);
+        public Task AddAsync(Product product);
+        public Task UpdateAsync(Product product);
+        public Task DeleteAsync(int id);
     }
 }

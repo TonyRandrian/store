@@ -10,31 +10,31 @@ namespace Store.Infrastructure.Repositories
         private readonly StoreDbContext Context = context;
 
 
-        public async Task<List<Customer>> AGetAll()
+        public async Task<List<Customer>> GetAllAsync()
         {
             return await Context.Customers.ToListAsync();
         }
 
-        public async Task<Customer?> AGetById(int id)
+        public async Task<Customer?> GetByIdAsync(int id)
         {
             return await Context.Customers.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task AAdd(Customer customer)
+        public async Task AddAsync(Customer customer)
         {
             Context.Customers.Add(customer);
             await Context.SaveChangesAsync();
         }
 
-        public async Task AUpdate(Customer customer)
+        public async Task UpdateAsync(Customer customer)
         {
             Context.Customers.Update(customer);
             await Context.SaveChangesAsync();
         }
 
-        public async Task ADelete(int id)
+        public async Task DeleteAsync(int id)
         {
-            Customer? customer = await AGetById(id);
+            Customer? customer = await GetByIdAsync(id);
 
             if (customer == null)
                 return;

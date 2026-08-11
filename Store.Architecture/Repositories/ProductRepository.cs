@@ -10,31 +10,31 @@ namespace Store.Infrastructure.Repositories
         private readonly StoreDbContext Context = context;
 
 
-        public async Task<List<Product>> AGetAll()
+        public async Task<List<Product>> GetAllAsync()
         {
             return await Context.Products.ToListAsync();
         }
 
-        public async Task<Product?> AGetById(int id)
+        public async Task<Product?> GetByIdAsync(int id)
         {
             return await Context.Products.FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        public async Task AAdd(Product product)
+        public async Task AddAsync(Product product)
         {
             await Context.Products.AddAsync(product);
             await Context.SaveChangesAsync();
         }
 
-        public async Task AUpdate(Product product)
+        public async Task UpdateAsync(Product product)
         {
             Context.Products.Update(product);
             await Context.SaveChangesAsync();
         }
 
-        public async Task ADelete(int id)
+        public async Task DeleteAsync(int id)
         {
-            Product? product = await AGetById(id);
+            Product? product = await GetByIdAsync(id);
 
             if (product == null)
                 return;

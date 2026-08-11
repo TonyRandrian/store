@@ -4,10 +4,10 @@ namespace Store.Application.Interfaces
 {
     public interface ICategoryRepository
     {
-        public Task<List<Category>> AGetAll();
-        public Task<Category?> AGetById(int id);
-        public Task AAdd(Category category);
-        public Task AUpdate(Category category);
-        public Task ADelete(int id);
+        public Task<List<Category>> GetAllAsync();
+        public Task<Category?> GetByIdAsync(int id);
+        public Task AddAsync(Category category);
+        public Task UpdateAsync(Category category);
+        public Task DeleteAsync(int id);
     }
 }
