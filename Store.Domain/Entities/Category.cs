@@ -17,6 +17,14 @@
             Children = children ?? [];
         }
 
+        public Category()
+        {
+            Name = "";
+            Parent = null;
+            Products = [];
+            Children = [];
+        }
+
         public int Id
         {
             get;

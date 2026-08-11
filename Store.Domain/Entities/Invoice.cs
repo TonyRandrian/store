@@ -11,6 +11,12 @@
             Total = total;
         }
 
+        public Invoice()
+        {
+            Reference = "";
+            Total = 0;
+        }
+
         public int Id
         {
             get;

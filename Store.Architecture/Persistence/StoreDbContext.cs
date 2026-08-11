@@ -3,13 +3,8 @@ using Store.Domain.Entities;
 
 namespace Store.Infrastructure.Persistence
 {
-    public class StoreDbContext : DbContext
+    public class StoreDbContext(DbContextOptions options) : DbContext(options)
     {
-
-        public StoreDbContext(DbContextOptions options) : base(options)
-        {
-        }
-
         public DbSet<Category> Categories => Set<Category>();
         public DbSet<Customer> Customers => Set<Customer>();
         public DbSet<Invoice> Invoices => Set<Invoice>();

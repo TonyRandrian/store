@@ -10,6 +10,12 @@
             Invoices = invoices ?? [];
         }
 
+        public Customer()
+        {
+            Name = "";
+            Invoices = [];
+        }
+
         public int Id
         {
             get;

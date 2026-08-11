@@ -11,6 +11,13 @@
             Suppliers = suppliers ?? [];
         }
 
+        public Product()
+        {
+            Name = "";
+            Category = null;
+            Suppliers = [];
+        }
+
         public int Id
         {
             get;

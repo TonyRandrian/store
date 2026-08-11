@@ -10,6 +10,12 @@
             Products = products ?? [];
         }
 
+        public Supplier()
+        {
+            Name = "";
+            Products = [];
+        }
+
         public int Id
         {
             get;
