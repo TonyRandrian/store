@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Products;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Products
@@ -7,9 +8,17 @@ namespace Store.Application.UseCases.Products
     {
         private readonly IProductRepository ProductRepository = productRepository;
 
-        public async Task<List<Product>> Execute()
+        public async Task<List<ProductResponse>> Execute()
         {
-            return await ProductRepository.GetAllAsync();
+            List<Product> products = await ProductRepository.GetAllAsync();
+            List<ProductResponse> result = [];
+
+            foreach (Product product in products)
+            {
+                result.Add(new ProductResponse(product));
+            }
+
+            return result;
         }
     }
 }
