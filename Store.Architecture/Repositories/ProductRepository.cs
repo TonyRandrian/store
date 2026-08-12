@@ -44,13 +44,17 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            Product? product = await GetByIdAsync(id);
-
-            if (product == null)
-                return;
+            Product? product = await GetByIdAsync(id) 
+                ?? throw new KeyNotFoundException($"No product with the id {id} found");
 
             Context.Products.Remove(product);
             await Context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsUsed(int id)
+        {
+            return await Context.Suppliers
+                .AnyAsync(s => s.Products.Any(p => p.Id == id));
         }
     }
 }
