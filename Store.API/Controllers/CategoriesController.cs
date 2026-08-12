@@ -7,13 +7,15 @@ namespace Store.API.Controllers
     [ApiController]
     [Route("api/categories")]
     public class CategoriesController(
-        CreateCategoryUseCase createCategoryUseCase, 
+        CreateCategoryUseCase createCategoryUseCase,
         GetCategoriesUseCase getCategoriesUseCase,
-        GetCategoryUseCase getCategoryUseCase) : ControllerBase
+        GetCategoryUseCase getCategoryUseCase,
+        DeleteCategoryUseCase deleteCategoryUseCase) : ControllerBase
     {
         private readonly CreateCategoryUseCase CreateCategoryUseCase = createCategoryUseCase;
         private readonly GetCategoriesUseCase GetCategoriesUseCase = getCategoriesUseCase;
         private readonly GetCategoryUseCase GetCategoryUseCase = getCategoryUseCase;
+        private readonly DeleteCategoryUseCase DeleteCategoryUseCase = deleteCategoryUseCase;
 
 
         [HttpPost]
@@ -29,9 +31,27 @@ namespace Store.API.Controllers
         }
 
         [HttpGet("{id:int}")]
-        public async Task<CategoryResponse?> GetCategory([FromRoute]int id)
+        public async Task<CategoryResponse?> GetCategory([FromRoute] int id)
         {
             return await GetCategoryUseCase.Execute(id);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                await DeleteCategoryUseCase.Execute(id);
+                return NoContent();
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new { ioe.Message });
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
+            }
         }
     }
 }
