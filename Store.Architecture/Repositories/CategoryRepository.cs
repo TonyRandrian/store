@@ -54,5 +54,10 @@ namespace Store.Infrastructure.Repositories
 
             return await Context.Products.AnyAsync(p => p.Category != null && p.Category.Id == id);
         }
+
+        public async Task<bool> Exists(int id)
+        {
+            return await Context.Categories.AnyAsync(c => c.Id == id);
+        }
     }
 }
