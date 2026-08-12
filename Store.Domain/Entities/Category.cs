@@ -19,7 +19,6 @@
 
         public Category()
         {
-            Parent = null;
             Products = [];
             Children = [];
         }

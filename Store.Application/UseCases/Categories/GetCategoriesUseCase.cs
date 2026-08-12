@@ -16,7 +16,7 @@ namespace Store.Application.UseCases.Categories
 
             foreach (Category category in categories)
             {
-                result.Add(new CategoryResponse(category.Id, category.Name));
+                result.Add(new CategoryResponse(category));
             }
 
             return result;

@@ -21,14 +21,7 @@ namespace Store.Application.UseCases.Products
             Product product = new(request.Name, request.Price, category);
             await ProductRepository.AddAsync(product);
 
-            // build return value
-            CategoryResponse categoryResponse = new(category.Id, category.Name, category.Parent?.Id);
-            return new ProductResponse(
-                product.Id,
-                product.Name,
-                product.Price,
-                categoryResponse
-                );
+            return new ProductResponse(product);
         }
     }
 }
