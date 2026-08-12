@@ -1,4 +1,6 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Categories;
+using Store.Application.DTOs.Products;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Products
@@ -9,15 +11,24 @@ namespace Store.Application.UseCases.Products
         private readonly IProductRepository ProductRepository = productRepository;
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
-        public async Task<Product> Execute(string name, decimal price, int categoryId)
+        public async Task<ProductResponse> Execute(CreateProductRequest request)
         {
             // validation
-            Category? category = await CategoryRepository.GetByIdAsync(categoryId) 
-                ?? throw new Exception($"No category with the id {categoryId} found");
+            Category? category = await CategoryRepository.GetByIdAsync(request.CategoryId)
+                ?? throw new Exception($"No category with the id {request.CategoryId} found");
 
             // persistence
-            Product product = new(name, price, category);
-            return await ProductRepository.AddAsync(product);
+            Product product = new(request.Name, request.Price, category);
+            await ProductRepository.AddAsync(product);
+
+            // build return value
+            CategoryResponse categoryResponse = new(category.Id, category.Name, category.Parent?.Id);
+            return new ProductResponse(
+                product.Id,
+                product.Name,
+                product.Price,
+                categoryResponse
+                );
         }
     }
 }
