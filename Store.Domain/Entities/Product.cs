@@ -2,6 +2,8 @@
 {
     public class Product
     {
+        private string name = null!;
+
 
         public Product(string name, decimal price, Category? category, List<Supplier>? suppliers = null)
         {
@@ -13,8 +15,6 @@
 
         public Product()
         {
-            Name = "";
-            Category = null;
             Suppliers = [];
         }
 
@@ -27,12 +27,12 @@
 
         public string Name
         {
-            get;
+            get => name;
 
             set
             {
                 ArgumentNullException.ThrowIfNullOrEmpty(value, "Cannot create a product with a null or empty name");
-                field = value;
+                name = value;
             }
         }
 

@@ -6,14 +6,31 @@ namespace Store.API.Controllers
 {
     [ApiController]
     [Route("api/products")]
-    public class ProductsController(CreateProductUseCase createProductUseCase) : ControllerBase
+    public class ProductsController(
+        CreateProductUseCase createProductUseCase,
+        GetProductsUseCase getProductsUseCase) : ControllerBase
     {
         private readonly CreateProductUseCase CreateProductUseCase = createProductUseCase;
+        private readonly GetProductsUseCase GetProductsUseCase = getProductsUseCase;
 
-        [HttpPost]
-        public async Task<ProductResponse> Create(CreateProductRequest request)
+        /*[HttpPost]
+        public async Task<IActionResult> Create(CreateProductRequest request)
         {
-            return await CreateProductUseCase.Execute(request);
+            try
+            {
+                ProductResponse response = await CreateProductUseCase.Execute(request);
+                return CreatedAtAction(
+                    nameof(GetById)
+                    );
+            }
+        }*/
+
+        [HttpGet]
+        public async Task<IActionResult> GetProducts()
+        {
+            List<ProductResponse> response = await GetProductsUseCase.Execute();
+
+            return Ok(response);
         }
     }
 }

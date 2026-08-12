@@ -1,5 +1,4 @@
-﻿using Store.Application.DTOs.Categories;
-using Store.Application.DTOs.Products;
+﻿using Store.Application.DTOs.Products;
 using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
@@ -15,7 +14,7 @@ namespace Store.Application.UseCases.Products
         {
             // validation
             Category? category = await CategoryRepository.GetByIdAsync(request.CategoryId)
-                ?? throw new Exception($"No category with the id {request.CategoryId} found");
+                ?? throw new KeyNotFoundException($"No category with the id {request.CategoryId} found");
 
             // persistence
             Product product = new(request.Name, request.Price, category);
