@@ -2,6 +2,8 @@
 {
     public class Category
     {
+        private string name = null!;
+
 
         public Category(
             string name,
@@ -17,7 +19,6 @@
 
         public Category()
         {
-            Name = "";
             Parent = null;
             Products = [];
             Children = [];
@@ -32,12 +33,12 @@
 
         public string Name
         {
-            get;
+            get => name;
 
             set
             {
                 ArgumentException.ThrowIfNullOrWhiteSpace(value, "Cannot create a category with a null or empty name");
-                field = value;
+                name = value;
             }
         }
 
