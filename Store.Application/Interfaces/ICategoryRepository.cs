@@ -10,5 +10,6 @@ namespace Store.Application.Interfaces
         public Task<Category> UpdateAsync(Category category);
         public Task DeleteAsync(int id);
         public Task<bool> IsUsed(int id);
+        public Task<bool> Exists(int id);
     }
 }

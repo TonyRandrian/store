@@ -22,9 +22,21 @@ namespace Store.API.Controllers
 
 
         [HttpPost]
-        public async Task<CategoryResponse> Create(CreateCategoryRequest request)
+        public async Task<IActionResult> Create(CreateCategoryRequest request)
         {
-            return await CreateCategoryUseCase.Execute(request);
+            try
+            {
+                CategoryResponse response = await CreateCategoryUseCase.Execute(request);
+                return CreatedAtAction(
+                    nameof(GetCategory),
+                    new { id = response.Id },
+                    response
+                    );
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new {knf.Message});
+            }
         }
 
         [HttpGet]

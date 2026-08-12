@@ -10,7 +10,18 @@ namespace Store.Application.UseCases.Categories
 
         public async Task<CategoryResponse> Execute(CreateCategoryRequest request)
         {
-            Category? categoryParent = await CategoryRepository.GetByIdAsync(request.ParentCategoryId);
+            Category? categoryParent = null;
+            if (request.ParentCategoryId != null)
+            {
+                int id = request.ParentCategoryId.Value;
+
+                if (!await CategoryRepository.Exists(id))
+                {
+                    throw new KeyNotFoundException($"No category with id {id} found, cannot create parent");
+                }
+
+                categoryParent = await CategoryRepository.GetByIdAsync(id);
+            }
 
             Category category = new(request.Name, categoryParent);
             await CategoryRepository.AddAsync(category);

@@ -3,6 +3,6 @@
     public class CreateCategoryRequest
     {
         public string Name { get; set; } = string.Empty;
-        public int ParentCategoryId { get; set; }
+        public Int32? ParentCategoryId { get; set; }
     }
 }
