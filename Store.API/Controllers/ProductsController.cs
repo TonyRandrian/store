@@ -15,17 +15,22 @@ namespace Store.API.Controllers
         private readonly GetProductsUseCase GetProductsUseCase = getProductsUseCase;
         private readonly GetProductUseCase GetProductUseCase = getProductUseCase;
 
-        /*[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> Create(CreateProductRequest request)
         {
             try
             {
                 ProductResponse response = await CreateProductUseCase.Execute(request);
                 return CreatedAtAction(
-                    nameof(GetById)
-                    );
+                    nameof(GetProduct),
+                    new { id = response.Id },
+                    response);
             }
-        }*/
+            catch (KeyNotFoundException knf)
+            {
+                return BadRequest(new { knf.Message });
+            }
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetProducts()
