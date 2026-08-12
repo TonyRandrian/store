@@ -15,7 +15,7 @@ namespace Store.Application.UseCases.Categories
             Category category = new(request.Name, categoryParent);
             await CategoryRepository.AddAsync(category);
 
-            return new CategoryResponse(category.Id, category.Name, categoryParent?.Id);
+            return new CategoryResponse(category);
         }
     }
 }
