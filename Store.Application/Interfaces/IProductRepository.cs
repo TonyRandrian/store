@@ -9,5 +9,6 @@ namespace Store.Application.Interfaces
         public Task<Product> AddAsync(Product product);
         public Task<Product> UpdateAsync(Product product);
         public Task DeleteAsync(int id);
+        public Task<bool> IsUsed(int id);
     }
 }

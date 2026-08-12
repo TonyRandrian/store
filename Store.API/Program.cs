@@ -26,6 +26,7 @@ builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
 builder.Services.AddScoped<GetProductsUseCase>();
 builder.Services.AddScoped<GetProductUseCase>();
+builder.Services.AddScoped<DeleteProductUseCase>();
 
 builder.Services.AddScoped<CreateCategoryUseCase>();
 builder.Services.AddScoped<GetCategoriesUseCase>();

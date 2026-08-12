@@ -9,11 +9,13 @@ namespace Store.API.Controllers
     public class ProductsController(
         CreateProductUseCase createProductUseCase,
         GetProductsUseCase getProductsUseCase,
-        GetProductUseCase getProductUseCase) : ControllerBase
+        GetProductUseCase getProductUseCase,
+        DeleteProductUseCase deleteProductUseCase) : ControllerBase
     {
         private readonly CreateProductUseCase CreateProductUseCase = createProductUseCase;
         private readonly GetProductsUseCase GetProductsUseCase = getProductsUseCase;
         private readonly GetProductUseCase GetProductUseCase = getProductUseCase;
+        private readonly DeleteProductUseCase DeleteProductUseCase = deleteProductUseCase;
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateProductRequest request)
@@ -51,6 +53,24 @@ namespace Store.API.Controllers
             }
 
             return NotFound(new { Message = $"No product with the id {id} found" });
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                await DeleteProductUseCase.Execute(id);
+                return NoContent();
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new { ioe.Message });
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
+            }
         }
     }
 }
