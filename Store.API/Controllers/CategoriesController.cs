@@ -15,13 +15,13 @@ namespace Store.API.Controllers
         private readonly GetCategoriesUseCase GetCategoriesUseCase = getCategoriesUseCase;
 
         [HttpPost]
-        public async Task<Category> Create(CreateCategoryRequest request)
+        public async Task<CategoryResponse> Create(CreateCategoryRequest request)
         {
             return await CreateCategoryUseCase.Execute(request);
         }
 
         [HttpGet]
-        public async Task<List<Category>> GetCategories()
+        public async Task<List<CategoryResponse>> GetCategories()
         {
             return await GetCategoriesUseCase.Execute();
         }

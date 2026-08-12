@@ -8,12 +8,14 @@ namespace Store.Application.UseCases.Categories
     {
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
-        public async Task<Category> Execute(CreateCategoryRequest request)
+        public async Task<CategoryResponse> Execute(CreateCategoryRequest request)
         {
             Category? categoryParent = await CategoryRepository.GetByIdAsync(request.ParentCategoryId);
 
             Category category = new(request.Name, categoryParent);
-            return await CategoryRepository.AddAsync(category);
+            await CategoryRepository.AddAsync(category);
+
+            return new CategoryResponse(category.Id, category.Name);
         }
     }
 }
