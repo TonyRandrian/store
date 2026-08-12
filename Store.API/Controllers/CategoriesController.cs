@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.Application.DTOs.Categories;
 using Store.Application.UseCases.Categories;
-using Store.Domain.Entities;
 
 namespace Store.API.Controllers
 {
