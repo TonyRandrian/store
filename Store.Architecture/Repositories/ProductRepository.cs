@@ -14,6 +14,7 @@ namespace Store.Infrastructure.Repositories
         {
             return await Context.Products
                 .Include(p => p.Category)
+                .ThenInclude(c => c!.Parent)
                 .ToListAsync();
         }
 
@@ -21,6 +22,7 @@ namespace Store.Infrastructure.Repositories
         {
             return await Context.Products
                 .Include(p => p.Category)
+                .ThenInclude(c => c!.Parent)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
