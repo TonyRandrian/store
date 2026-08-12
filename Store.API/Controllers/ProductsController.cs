@@ -10,12 +10,14 @@ namespace Store.API.Controllers
         CreateProductUseCase createProductUseCase,
         GetProductsUseCase getProductsUseCase,
         GetProductUseCase getProductUseCase,
-        DeleteProductUseCase deleteProductUseCase) : ControllerBase
+        DeleteProductUseCase deleteProductUseCase,
+        UpdateProductUseCase updateProductUseCase) : ControllerBase
     {
         private readonly CreateProductUseCase CreateProductUseCase = createProductUseCase;
         private readonly GetProductsUseCase GetProductsUseCase = getProductsUseCase;
         private readonly GetProductUseCase GetProductUseCase = getProductUseCase;
         private readonly DeleteProductUseCase DeleteProductUseCase = deleteProductUseCase;
+        private readonly UpdateProductUseCase UpdateProductUseCase = updateProductUseCase;
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateProductRequest request)
@@ -66,6 +68,21 @@ namespace Store.API.Controllers
             catch (InvalidOperationException ioe)
             {
                 return BadRequest(new { ioe.Message });
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
+            }
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update([FromRoute] int id,
+            [FromBody] UpdateProductRequest request)
+        {
+            try
+            {
+                ProductResponse response = await UpdateProductUseCase.Excecute(id, request);
+                return Ok(response);
             }
             catch (KeyNotFoundException knf)
             {
