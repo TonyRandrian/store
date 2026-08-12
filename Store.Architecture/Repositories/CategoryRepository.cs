@@ -17,7 +17,9 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Category?> GetByIdAsync(int id)
         {
-            return await Context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            return await Context.Categories
+                .Include(c => c.Parent)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Category> AddAsync(Category category)
