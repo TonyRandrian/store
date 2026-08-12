@@ -15,10 +15,9 @@ namespace Store.API.Controllers
         private readonly GetCategoriesUseCase GetCategoriesUseCase = getCategoriesUseCase;
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateCategoryRequest request)
+        public async Task<Category> Create(CreateCategoryRequest request)
         {
-            Category category = await CreateCategoryUseCase.Execute(request);
-            return CreatedAtAction("Category created", category);
+            return await CreateCategoryUseCase.Execute(request);
         }
 
         [HttpGet]
