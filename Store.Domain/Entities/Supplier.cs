@@ -2,6 +2,7 @@
 {
     public class Supplier
     {
+        private string name;
 
         public Supplier(string name, List<Product>? products = null)
         {
@@ -11,7 +12,6 @@
 
         public Supplier()
         {
-            Name = "";
             Products = [];
         }
 
@@ -24,12 +24,12 @@
 
         public string Name
         {
-            get;
+            get => name;
 
             set
             {
                 ArgumentException.ThrowIfNullOrWhiteSpace(value, "Cannot create a supplier with a null or empty name");
-                field = value;
+                name = value;
             }
         }
 
