@@ -9,11 +9,13 @@ namespace Store.API.Controllers
     public class CustomersController(
         GetCustomerUseCase getCustomerUseCase,
         GetCustomersUseCase getCustomersUseCase,
-        CreateCustomerUseCase createCustomerUseCase) : ControllerBase
+        CreateCustomerUseCase createCustomerUseCase,
+        DeleteCustomerUseCase deleteCustomerUseCase) : ControllerBase
     {
         private readonly GetCustomerUseCase GetCustomerUseCase = getCustomerUseCase;
         private readonly GetCustomersUseCase GetCustomersUseCase = getCustomersUseCase;
         private readonly CreateCustomerUseCase CreateCustomerUseCase = createCustomerUseCase;
+        private readonly DeleteCustomerUseCase DeleteCustomerUseCase = deleteCustomerUseCase;
 
 
         [HttpPost]
@@ -23,7 +25,7 @@ namespace Store.API.Controllers
 
             return CreatedAtAction(
                 nameof(GetCustomer),
-                new {id = response.Id},
+                new { id = response.Id },
                 response
                 );
         }
@@ -38,7 +40,7 @@ namespace Store.API.Controllers
                 return Ok(response);
             }
 
-            return NotFound(new { Message = $"No customer with the id {id} found"});
+            return NotFound(new { Message = $"No customer with the id {id} found" });
         }
 
         [HttpGet]
@@ -47,6 +49,20 @@ namespace Store.API.Controllers
             List<CustomerResponse> responses = await GetCustomersUseCase.Execute();
 
             return Ok(responses);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                await DeleteCustomerUseCase.Execute(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
+            }
         }
     }
 }
