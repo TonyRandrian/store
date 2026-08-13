@@ -44,10 +44,8 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            Supplier? supplier = await GetByIdAsync(id);
-
-            if (supplier == null)
-                return;
+            Supplier? supplier = await GetByIdAsync(id)
+                ?? throw new KeyNotFoundException($"No supplier with the id {id} found");
 
             Context.Suppliers.Remove(supplier);
             await Context.SaveChangesAsync();
