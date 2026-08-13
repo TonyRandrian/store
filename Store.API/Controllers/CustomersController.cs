@@ -10,12 +10,14 @@ namespace Store.API.Controllers
         GetCustomerUseCase getCustomerUseCase,
         GetCustomersUseCase getCustomersUseCase,
         CreateCustomerUseCase createCustomerUseCase,
-        DeleteCustomerUseCase deleteCustomerUseCase) : ControllerBase
+        DeleteCustomerUseCase deleteCustomerUseCase,
+        UpdateCustomerUseCase updateCustomerUseCase) : ControllerBase
     {
         private readonly GetCustomerUseCase GetCustomerUseCase = getCustomerUseCase;
         private readonly GetCustomersUseCase GetCustomersUseCase = getCustomersUseCase;
         private readonly CreateCustomerUseCase CreateCustomerUseCase = createCustomerUseCase;
         private readonly DeleteCustomerUseCase DeleteCustomerUseCase = deleteCustomerUseCase;
+        private readonly UpdateCustomerUseCase UpdateCustomerUseCase = updateCustomerUseCase;
 
 
         [HttpPost]
@@ -60,6 +62,22 @@ namespace Store.API.Controllers
                 return NoContent();
             }
             catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
+            }
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(
+            [FromRoute] int id,
+            [FromBody] UpdateCustomerRequest request)
+        {
+            try
+            {
+                CustomerResponse response = await UpdateCustomerUseCase.Execute(id, request);
+                return Ok(response);
+            }
+            catch(KeyNotFoundException knf)
             {
                 return NotFound(new { knf.Message });
             }

@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Customers;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Customers
@@ -8,17 +9,18 @@ namespace Store.Application.UseCases.Customers
         private readonly ICustomerRepository CustomerRepository = customerRepository;
 
 
-        public async Task<Customer> Execute(int id, string name)
+        public async Task<CustomerResponse> Execute(int id, UpdateCustomerRequest request)
         {
             // validation
             Customer? customer = await CustomerRepository.GetByIdAsync(id)
-                ?? throw new Exception($"No customer with the id {id} found");
+                ?? throw new KeyNotFoundException($"No customer with the id {id} found");
 
             // update
-            customer.Name = name;
+            customer.Name = request.Name;
 
             // persistence
-            return await CustomerRepository.UpdateAsync(customer);
+            customer = await CustomerRepository.UpdateAsync(customer);
+            return new CustomerResponse(customer);
         }
     }
 }
