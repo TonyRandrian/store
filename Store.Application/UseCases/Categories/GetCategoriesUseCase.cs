@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Categories;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Categories
@@ -8,9 +9,17 @@ namespace Store.Application.UseCases.Categories
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
 
-        public async Task<List<Category>> Execute()
+        public async Task<List<CategoryResponse>> Execute()
         {
-            return await CategoryRepository.GetAllAsync();
+            List<CategoryResponse> result = [];
+            List<Category> categories = await CategoryRepository.GetAllAsync();
+
+            foreach (Category category in categories)
+            {
+                result.Add(new CategoryResponse(category));
+            }
+
+            return result;
         }
     }
 }

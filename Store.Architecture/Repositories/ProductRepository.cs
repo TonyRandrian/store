@@ -12,12 +12,20 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<List<Product>> GetAllAsync()
         {
-            return await Context.Products.ToListAsync();
+            return await Context.Products
+                .Include(p => p.Suppliers)
+                .Include(p => p.Category)
+                .ThenInclude(c => c!.Parent)
+                .ToListAsync();
         }
 
         public async Task<Product?> GetByIdAsync(int id)
         {
-            return await Context.Products.FirstOrDefaultAsync(p => p.Id == id);
+            return await Context.Products
+                .Include(p => p.Suppliers)
+                .Include(p => p.Category)
+                .ThenInclude(c => c!.Parent)
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<Product> AddAsync(Product product)
@@ -38,13 +46,17 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            Product? product = await GetByIdAsync(id);
-
-            if (product == null)
-                return;
+            Product? product = await GetByIdAsync(id) 
+                ?? throw new KeyNotFoundException($"No product with the id {id} found");
 
             Context.Products.Remove(product);
             await Context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsUsed(int id)
+        {
+            return await Context.Suppliers
+                .AnyAsync(s => s.Products.Any(p => p.Id == id));
         }
     }
 }

@@ -6,9 +6,13 @@ namespace Store.Application.UseCases.Products
     {
         private readonly IProductRepository ProductRepository = productRepository;
 
-        public async Task Ececute(int id)
+        public async Task<int> Execute(int id)
         {
+            if (await ProductRepository.IsUsed(id))
+                throw new InvalidOperationException("This product is used by one or many suppliers, cannot delete");
+
             await ProductRepository.DeleteAsync(id);
+            return id;
         }
     }
 }

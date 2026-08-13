@@ -12,12 +12,16 @@ namespace Store.Infrastructure.Repositories
             
         public async Task<List<Invoice>> GetAllAsync()
         {
-            return await Context.Invoices.ToListAsync();
+            return await Context.Invoices
+                .Include(i => i.Customer)
+                .ToListAsync();
         }
 
         public async Task<Invoice?> GetByIdAsync(int id)
         {
-            return await Context.Invoices.FirstOrDefaultAsync(i => i.Id == id);
+            return await Context.Invoices
+                .Include(i => i.Customer)
+                .FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<Invoice> AddAsync(Invoice invoice)
@@ -38,10 +42,8 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            Invoice? invoice = await GetByIdAsync(id);
-
-            if (invoice == null)
-                return;
+            Invoice? invoice = await GetByIdAsync(id)
+                ?? throw new KeyNotFoundException($"No invoice with the id {id} found");
 
             Context.Invoices.Remove(invoice);
             await Context.SaveChangesAsync();

@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Categories;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Categories
@@ -7,12 +8,25 @@ namespace Store.Application.UseCases.Categories
     {
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
-        public async Task<Category> Execute(string name, int categoryParentId)
+        public async Task<CategoryResponse> Execute(CreateCategoryRequest request)
         {
-            Category? categoryParent = await CategoryRepository.GetByIdAsync(categoryParentId);
+            Category? categoryParent = null;
+            if (request.ParentCategoryId != null)
+            {
+                int id = request.ParentCategoryId.Value;
 
-            Category category = new(name, categoryParent);
-            return await CategoryRepository.AddAsync(category);
+                if (!await CategoryRepository.Exists(id))
+                {
+                    throw new KeyNotFoundException($"No category with id {id} found, cannot create parent");
+                }
+
+                categoryParent = await CategoryRepository.GetByIdAsync(id);
+            }
+
+            Category category = new(request.Name, categoryParent);
+            await CategoryRepository.AddAsync(category);
+
+            return new CategoryResponse(category);
         }
     }
 }

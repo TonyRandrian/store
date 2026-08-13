@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Customers;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Customers
@@ -8,9 +9,17 @@ namespace Store.Application.UseCases.Customers
         private readonly ICustomerRepository CustomerRepository = customerRepository;
 
         
-        public async Task<List<Customer>> Execute()
+        public async Task<List<CustomerResponse>> Execute()
         {
-            return await CustomerRepository.GetAllAsync();
+            List<Customer> customers = await CustomerRepository.GetAllAsync();
+            List<CustomerResponse> responses = [];
+
+            foreach (Customer customer in customers)
+            {
+                responses.Add(new CustomerResponse(customer));
+            }
+
+            return responses;
         }
     }
 }

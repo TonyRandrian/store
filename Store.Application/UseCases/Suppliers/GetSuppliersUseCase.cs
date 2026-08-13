@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Suppliers;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Suppliers
@@ -8,9 +9,17 @@ namespace Store.Application.UseCases.Suppliers
         private readonly ISupplierRepository SupplierRepository = supplierRepository;
 
 
-        public async Task<List<Supplier>> Execute()
+        public async Task<List<SupplierResponse>> Execute()
         {
-            return await SupplierRepository.GetAllAsync();
+            List<Supplier> suppliers = await SupplierRepository.GetAllAsync();
+            List<SupplierResponse> responses = [];
+
+            foreach (Supplier supplier in suppliers)
+            {
+                responses.Add(new SupplierResponse(supplier));
+            }
+
+            return responses;
         }
     }
 }

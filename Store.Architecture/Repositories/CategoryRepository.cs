@@ -17,7 +17,9 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Category?> GetByIdAsync(int id)
         {
-            return await Context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+            return await Context.Categories
+                .Include(c => c.Parent)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Category> AddAsync(Category category)
@@ -38,13 +40,24 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            Category? category = await GetByIdAsync(id);
-
-            if (category == null)
-                return;
+            Category? category = await GetByIdAsync(id)
+                ?? throw new KeyNotFoundException($"No category with the id {id} found");
 
             Context.Categories.Remove(category);
             await Context.SaveChangesAsync();
+        }
+
+        public async Task<bool> IsUsed(int id)
+        {
+            bool hasChildren = await Context.Categories.AnyAsync(c => c.Parent != null && c.Parent.Id == id);
+            if (hasChildren) return true;
+
+            return await Context.Products.AnyAsync(p => p.Category != null && p.Category.Id == id);
+        }
+
+        public async Task<bool> Exists(int id)
+        {
+            return await Context.Categories.AnyAsync(c => c.Id == id);
         }
     }
 }

@@ -1,16 +1,19 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Categories;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Categories
 {
-    internal class GetCategoryUseCase(ICategoryRepository categoryRepository)
+    public class GetCategoryUseCase(ICategoryRepository categoryRepository)
     {
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
 
-        public async Task<Category?> Execute(int id)
+        public async Task<CategoryResponse?> Execute(int id)
         {
-            return await CategoryRepository.GetByIdAsync(id);
+            Category? category = await CategoryRepository.GetByIdAsync(id);
+
+            return category == null ? null : new CategoryResponse(category);
         }
     }
 }

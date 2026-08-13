@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Categories;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Categories
@@ -7,20 +8,22 @@ namespace Store.Application.UseCases.Categories
     {
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
-        public async Task<Category> Execute(int id, string name, int categoryParentId)
+        public async Task<CategoryResponse> Execute(int id, UpdateCategoryRequest request)
         {
             // validation
             Category? category= await CategoryRepository.GetByIdAsync(id)
                 ?? throw new Exception($"No category with the id {id} found");
 
-            Category? categoryParent = await CategoryRepository.GetByIdAsync(categoryParentId);
+            Category? categoryParent = request.ParentCategoryId == null ? null : 
+                await CategoryRepository.GetByIdAsync(request.ParentCategoryId.Value);
 
             // update
-            category.Name = name;
+            category.Name = request.Name;
             category.Parent = categoryParent;
 
             // persistence
-            return await CategoryRepository.UpdateAsync(category);
+            category = await CategoryRepository.UpdateAsync(category);
+            return new CategoryResponse(category);
         }
     }
 }
