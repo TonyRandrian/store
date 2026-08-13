@@ -12,10 +12,19 @@ namespace Store.Application.UseCases.Categories
         {
             // validation
             Category? category= await CategoryRepository.GetByIdAsync(id)
-                ?? throw new Exception($"No category with the id {id} found");
+                ?? throw new KeyNotFoundException($"No category with the id {id} found");
 
             Category? categoryParent = request.ParentCategoryId == null ? null : 
                 await CategoryRepository.GetByIdAsync(request.ParentCategoryId.Value);
+
+            if (categoryParent != null && categoryParent.Id == id)
+            {
+                throw new InvalidOperationException("Cannot be a parent of itself");
+            } 
+            else if (request.ParentCategoryId != null && categoryParent == null)
+            {
+                throw new KeyNotFoundException($"No category with the id {request.ParentCategoryId} found");
+            }
 
             // update
             category.Name = request.Name;

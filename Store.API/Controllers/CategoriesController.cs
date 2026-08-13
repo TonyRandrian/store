@@ -83,9 +83,19 @@ namespace Store.API.Controllers
             [FromRoute] int id,
             [FromBody] UpdateCategoryRequest request)
         {
-            CategoryResponse response = await UpdateCategoryUseCase.Execute(id, request);
-
-            return Ok(response);
+            try
+            {
+                CategoryResponse response = await UpdateCategoryUseCase.Execute(id, request);
+                return Ok(response);
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new { ioe.Message });
+            }
         }
     }
 }
