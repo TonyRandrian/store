@@ -4,6 +4,7 @@ using Store.Application.Interfaces;
 using Store.Infrastructure.Repositories;
 using Store.Application.UseCases.Products;
 using Store.Application.UseCases.Categories;
+using Store.Application.UseCases.Customers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +22,7 @@ builder.Services.AddDbContext<StoreDbContext>(options =>
 // Repositories
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 
 // UseCases
 builder.Services.AddScoped<CreateProductUseCase>();
@@ -34,6 +36,8 @@ builder.Services.AddScoped<GetCategoriesUseCase>();
 builder.Services.AddScoped<GetCategoryUseCase>();
 builder.Services.AddScoped<DeleteCategoryUseCase>();
 builder.Services.AddScoped<UpdateCategoryUseCase>();
+
+builder.Services.AddScoped<GetCustomerUseCase>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
