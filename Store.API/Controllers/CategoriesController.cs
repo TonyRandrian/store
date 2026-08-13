@@ -35,20 +35,29 @@ namespace Store.API.Controllers
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new {knf.Message});
+                return NotFound(new { knf.Message });
             }
         }
 
         [HttpGet]
-        public async Task<List<CategoryResponse>> GetCategories()
+        public async Task<IActionResult> GetCategories()
         {
-            return await GetCategoriesUseCase.Execute();
+            List<CategoryResponse> responses = await GetCategoriesUseCase.Execute();
+
+            return Ok(responses);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<CategoryResponse?> GetCategory([FromRoute] int id)
+        public async Task<IActionResult> GetCategory([FromRoute] int id)
         {
-            return await GetCategoryUseCase.Execute(id);
+            CategoryResponse? response = await GetCategoryUseCase.Execute(id);
+
+            if (response != null)
+            {
+                return Ok(response);
+            }
+
+            return NotFound(new { Message = $"No category with the id {id} found" });
         }
 
         [HttpDelete("{id:int}")]
