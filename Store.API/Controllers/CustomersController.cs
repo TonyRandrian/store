@@ -8,13 +8,25 @@ namespace Store.API.Controllers
     [Route("api/customers")]
     public class CustomersController(
         GetCustomerUseCase getCustomerUseCase,
-        GetCustomersUseCase getCustomersUseCase) : ControllerBase
+        GetCustomersUseCase getCustomersUseCase,
+        CreateCustomerUseCase createCustomerUseCase) : ControllerBase
     {
         private readonly GetCustomerUseCase GetCustomerUseCase = getCustomerUseCase;
         private readonly GetCustomersUseCase GetCustomersUseCase = getCustomersUseCase;
+        private readonly CreateCustomerUseCase CreateCustomerUseCase = createCustomerUseCase;
 
 
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateCustomerRequest request)
+        {
+            CustomerResponse response = await CreateCustomerUseCase.Execute(request);
 
+            return CreatedAtAction(
+                nameof(GetCustomer),
+                new {id = response.Id},
+                response
+                );
+        }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCustomer([FromRoute] int id)
