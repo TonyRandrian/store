@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Invoices;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Invoices
@@ -8,9 +9,12 @@ namespace Store.Application.UseCases.Invoices
         private readonly IInvoiceRepository InvoiceRepository = invoiceRepository;
 
 
-        public async Task<Invoice?> Execute(int id)
+        public async Task<InvoiceResponse> Execute(int id)
         {
-            return await InvoiceRepository.GetByIdAsync(id);
+            Invoice? invoice = await InvoiceRepository.GetByIdAsync(id) 
+                ?? throw new KeyNotFoundException($"No invoice with the id {id} found");
+
+            return new InvoiceResponse(invoice);
         }
     }
 }

@@ -2,6 +2,7 @@
 {
     public class Invoice
     {
+        private string reference;
 
         public Invoice(string reference, Customer customer, decimal total)
         {
@@ -12,7 +13,6 @@
 
         public Invoice()
         {
-            Reference = "";
             Total = 0;
         }
 
@@ -25,12 +25,12 @@
 
         public string Reference
         {
-            get;
+            get => reference;
 
             set
             {
                 ArgumentException.ThrowIfNullOrEmpty(value, "Cannot create an invoice with a null or empty reference");
-                field = value;
+                reference = value;
             }
         }
 
