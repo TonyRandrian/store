@@ -38,10 +38,8 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            Customer? customer = await GetByIdAsync(id);
-
-            if (customer == null)
-                return;
+            Customer? customer = await GetByIdAsync(id)
+                ?? throw new KeyNotFoundException($"No customer with the id {id} found");
 
             Context.Customers.Remove(customer);
             await Context.SaveChangesAsync();
