@@ -8,7 +8,7 @@ namespace Store.Application.UseCases.Categories
     {
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
-        public async Task<Category> Execute(int id, UpdateCategoryRequest request)
+        public async Task<CategoryResponse> Execute(int id, UpdateCategoryRequest request)
         {
             // validation
             Category? category= await CategoryRepository.GetByIdAsync(id)
@@ -22,7 +22,8 @@ namespace Store.Application.UseCases.Categories
             category.Parent = categoryParent;
 
             // persistence
-            return await CategoryRepository.UpdateAsync(category);
+            category = await CategoryRepository.UpdateAsync(category);
+            return new CategoryResponse(category);
         }
     }
 }

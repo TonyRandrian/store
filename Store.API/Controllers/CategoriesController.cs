@@ -83,8 +83,7 @@ namespace Store.API.Controllers
             [FromRoute] int id,
             [FromBody] UpdateCategoryRequest request)
         {
-            Category category = await UpdateCategoryUseCase.Execute(id, request);
-            CategoryResponse response = new(category);
+            CategoryResponse response = await UpdateCategoryUseCase.Execute(id, request);
 
             return Ok(response);
         }
