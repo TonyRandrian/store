@@ -8,10 +8,12 @@ namespace Store.API.Controllers
     [Route("api/invoices")]
     public class InvoicesController(
         GetInvoiceUseCase getInvoiceUseCase,
-        CreateInvoiceUseCase createInvoiceUseCase) : ControllerBase
+        CreateInvoiceUseCase createInvoiceUseCase,
+        GetInvoicesUseCase getInvoicesUseCase) : ControllerBase
     {
         private readonly GetInvoiceUseCase GetInvoiceUseCase = getInvoiceUseCase;
         private readonly CreateInvoiceUseCase CreateInvoiceUseCase = createInvoiceUseCase;
+        private readonly GetInvoicesUseCase GetInvoicesUseCase = getInvoicesUseCase;
 
 
         [HttpPost]
@@ -44,6 +46,13 @@ namespace Store.API.Controllers
             {
                 return NotFound(new { knf.Message });
             }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetInvoices()
+        {
+            List<InvoiceResponse> responses = await GetInvoicesUseCase.Execute();
+            return Ok(responses);
         }
     }
 }
