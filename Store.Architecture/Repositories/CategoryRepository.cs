@@ -12,12 +12,15 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<List<Category>> GetAllAsync()
         {
-            return await Context.Categories.ToListAsync();
+            return await Context.Categories
+                .Include(c => c.Products)
+                .ToListAsync();
         }
 
         public async Task<Category?> GetByIdAsync(int id)
         {
             return await Context.Categories
+                .Include(c => c.Products)
                 .Include(c => c.Parent)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
