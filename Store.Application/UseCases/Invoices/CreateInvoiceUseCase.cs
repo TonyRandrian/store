@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Invoices;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Invoices
@@ -9,14 +10,15 @@ namespace Store.Application.UseCases.Invoices
         private readonly ICustomerRepository CustomerRepository = customerRepository;
 
 
-        public async Task<Invoice> Execute(string reference, int customerId, decimal total)
+        public async Task<InvoiceResponse> Execute(CreateInvoiceRequest request)
         {
-            Customer? customer = await CustomerRepository.GetByIdAsync(customerId)
-                ?? throw new Exception($"No customer with the id {customerId} found");
+            Customer? customer = await CustomerRepository.GetByIdAsync(request.CustomerId)
+                ?? throw new KeyNotFoundException($"No customer with the id {request.CustomerId} found");
 
-            Invoice invoice = new(reference, customer, total);
+            Invoice invoice = new(request.Reference, customer, request.Total);
 
-            return await InvoiceRepository.AddAsync(invoice);
+            invoice = await InvoiceRepository.AddAsync(invoice);
+            return new InvoiceResponse(invoice);
         }
     }
 }
