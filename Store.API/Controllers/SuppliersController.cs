@@ -10,12 +10,14 @@ namespace Store.API.Controllers
         GetSupplierUseCase getSupplierUseCase,
         CreateSupplierUseCase createSupplierUseCase,
         GetSuppliersUseCase getSuppliersUseCase,
-        DeleteSupplierUseCase deleteSupplierUseCase) : ControllerBase
+        DeleteSupplierUseCase deleteSupplierUseCase,
+        UpdateSupplierUseCase updateSupplierUseCase) : ControllerBase
     {
         private readonly GetSupplierUseCase GetSupplierUseCase = getSupplierUseCase;
         private readonly CreateSupplierUseCase CreateSupplierUseCase = createSupplierUseCase;
         private readonly GetSuppliersUseCase GetSuppliersUseCase = getSuppliersUseCase;
         private readonly DeleteSupplierUseCase DeleteSupplierUseCase = deleteSupplierUseCase;
+        private readonly UpdateSupplierUseCase UpdateSupplierUseCase = updateSupplierUseCase;
 
 
         [HttpPost]
@@ -73,6 +75,22 @@ namespace Store.API.Controllers
             catch (InvalidOperationException ioe)
             {
                 return BadRequest(new { ioe.Message });
+            }
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Update(
+            [FromRoute] int id,
+            [FromBody] UpdateSupplierRequest request)
+        {
+            try
+            {
+                SupplierResponse response = await UpdateSupplierUseCase.Execute(id, request);
+                return Ok(response);
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
             }
         }
     }

@@ -57,6 +57,7 @@ builder.Services.AddScoped<GetSupplierUseCase>();
 builder.Services.AddScoped<CreateSupplierUseCase>();
 builder.Services.AddScoped<GetSuppliersUseCase>();
 builder.Services.AddScoped<DeleteSupplierUseCase>();
+builder.Services.AddScoped<UpdateSupplierUseCase>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
