@@ -9,11 +9,13 @@ namespace Store.API.Controllers
     public class SuppliersController(
         GetSupplierUseCase getSupplierUseCase,
         CreateSupplierUseCase createSupplierUseCase,
-        GetSuppliersUseCase getSuppliersUseCase) : ControllerBase
+        GetSuppliersUseCase getSuppliersUseCase,
+        DeleteSupplierUseCase deleteSupplierUseCase) : ControllerBase
     {
         private readonly GetSupplierUseCase GetSupplierUseCase = getSupplierUseCase;
         private readonly CreateSupplierUseCase CreateSupplierUseCase = createSupplierUseCase;
         private readonly GetSuppliersUseCase GetSuppliersUseCase = getSuppliersUseCase;
+        private readonly DeleteSupplierUseCase DeleteSupplierUseCase = deleteSupplierUseCase;
 
 
         [HttpPost]
@@ -54,6 +56,24 @@ namespace Store.API.Controllers
         {
             List<SupplierResponse> responses = await GetSuppliersUseCase.Execute();
             return Ok(responses);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                await DeleteSupplierUseCase.Execute(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new { ioe.Message });
+            }
         }
     }
 }

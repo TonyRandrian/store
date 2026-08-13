@@ -1,4 +1,5 @@
 ﻿using Store.Application.Interfaces;
+using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Suppliers
 {
@@ -9,6 +10,12 @@ namespace Store.Application.UseCases.Suppliers
 
         public async Task Execute(int id)
         {
+            Supplier? supplier = await SupplierRepository.GetByIdAsync(id);
+            if (supplier != null && supplier.Products.Count > 0)
+            {
+                throw new InvalidOperationException("This supplier is linked to products, cannot delete");
+            }
+
             await SupplierRepository.DeleteAsync(id);
         }
     }
