@@ -8,10 +8,12 @@ namespace Store.API.Controllers
     [Route("api/suppliers")]
     public class SuppliersController(
         GetSupplierUseCase getSupplierUseCase,
-        CreateSupplierUseCase createSupplierUseCase) : ControllerBase
+        CreateSupplierUseCase createSupplierUseCase,
+        GetSuppliersUseCase getSuppliersUseCase) : ControllerBase
     {
         private readonly GetSupplierUseCase GetSupplierUseCase = getSupplierUseCase;
         private readonly CreateSupplierUseCase CreateSupplierUseCase = createSupplierUseCase;
+        private readonly GetSuppliersUseCase GetSuppliersUseCase = getSuppliersUseCase;
 
 
         [HttpPost]
@@ -47,6 +49,11 @@ namespace Store.API.Controllers
             }
         }
 
-
+        [HttpGet]
+        public async Task<IActionResult> GetSuppliers()
+        {
+            List<SupplierResponse> responses = await GetSuppliersUseCase.Execute();
+            return Ok(responses);
+        }
     }
 }

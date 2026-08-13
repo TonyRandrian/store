@@ -12,7 +12,10 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<List<Supplier>> GetAllAsync()
         {
-            return await Context.Suppliers.ToListAsync();
+            return await Context.Suppliers
+                .Include(s => s.Products)
+                .ThenInclude(p => p.Category)
+                .ToListAsync();
         }
 
         public async Task<Supplier?> GetByIdAsync(int id)
