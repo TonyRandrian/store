@@ -42,10 +42,8 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(int id)
         {
-            Invoice? invoice = await GetByIdAsync(id);
-
-            if (invoice == null)
-                return;
+            Invoice? invoice = await GetByIdAsync(id)
+                ?? throw new KeyNotFoundException($"No invoice with the id {id} found");
 
             Context.Invoices.Remove(invoice);
             await Context.SaveChangesAsync();

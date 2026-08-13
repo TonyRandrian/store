@@ -48,6 +48,7 @@ builder.Services.AddScoped<UpdateCustomerUseCase>();
 builder.Services.AddScoped<CreateInvoiceUseCase>();
 builder.Services.AddScoped<GetInvoiceUseCase>();
 builder.Services.AddScoped<GetInvoicesUseCase>();
+builder.Services.AddScoped<DeleteInvoiceUseCase>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

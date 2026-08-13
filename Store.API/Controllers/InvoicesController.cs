@@ -9,11 +9,13 @@ namespace Store.API.Controllers
     public class InvoicesController(
         GetInvoiceUseCase getInvoiceUseCase,
         CreateInvoiceUseCase createInvoiceUseCase,
-        GetInvoicesUseCase getInvoicesUseCase) : ControllerBase
+        GetInvoicesUseCase getInvoicesUseCase,
+        DeleteInvoiceUseCase deleteInvoiceUseCase) : ControllerBase
     {
         private readonly GetInvoiceUseCase GetInvoiceUseCase = getInvoiceUseCase;
         private readonly CreateInvoiceUseCase CreateInvoiceUseCase = createInvoiceUseCase;
         private readonly GetInvoicesUseCase GetInvoicesUseCase = getInvoicesUseCase;
+        private readonly DeleteInvoiceUseCase DeleteInvoiceUseCase = deleteInvoiceUseCase;
 
 
         [HttpPost]
@@ -53,6 +55,20 @@ namespace Store.API.Controllers
         {
             List<InvoiceResponse> responses = await GetInvoicesUseCase.Execute();
             return Ok(responses);
+        }
+
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete([FromRoute] int id)
+        {
+            try
+            {
+                await DeleteInvoiceUseCase.Execute(id);
+                return NoContent();
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(new { knf.Message });
+            }
         }
     }
 }
