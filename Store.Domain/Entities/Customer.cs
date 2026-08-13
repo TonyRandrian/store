@@ -2,6 +2,7 @@
 {
     public class Customer
     {
+        private string name;
 
         public Customer(string name, List<Invoice>? invoices = null)
         {
@@ -11,7 +12,6 @@
 
         public Customer()
         {
-            Name = "";
             Invoices = [];
         }
 
@@ -24,12 +24,12 @@
 
         public string Name
         {
-            get;
+            get => name;
 
             set
             {
                 ArgumentException.ThrowIfNullOrWhiteSpace(value, "Cannot create a customer with a null or empty name");
-                field = value;
+                name = value;
             }
         }
 

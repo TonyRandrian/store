@@ -6,10 +6,27 @@ namespace Store.API.Controllers
 {
     [ApiController]
     [Route("api/customers")]
-    public class CustomersController(GetCustomerUseCase getCustomerUseCase) : ControllerBase
+    public class CustomersController(
+        GetCustomerUseCase getCustomerUseCase,
+        GetCustomersUseCase getCustomersUseCase,
+        CreateCustomerUseCase createCustomerUseCase) : ControllerBase
     {
         private readonly GetCustomerUseCase GetCustomerUseCase = getCustomerUseCase;
+        private readonly GetCustomersUseCase GetCustomersUseCase = getCustomersUseCase;
+        private readonly CreateCustomerUseCase CreateCustomerUseCase = createCustomerUseCase;
 
+
+        [HttpPost]
+        public async Task<IActionResult> Create(CreateCustomerRequest request)
+        {
+            CustomerResponse response = await CreateCustomerUseCase.Execute(request);
+
+            return CreatedAtAction(
+                nameof(GetCustomer),
+                new {id = response.Id},
+                response
+                );
+        }
 
         [HttpGet("{id:int}")]
         public async Task<IActionResult> GetCustomer([FromRoute] int id)
@@ -22,6 +39,14 @@ namespace Store.API.Controllers
             }
 
             return NotFound(new { Message = $"No customer with the id {id} found"});
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCustomers()
+        {
+            List<CustomerResponse> responses = await GetCustomersUseCase.Execute();
+
+            return Ok(responses);
         }
     }
 }

@@ -38,6 +38,8 @@ builder.Services.AddScoped<DeleteCategoryUseCase>();
 builder.Services.AddScoped<UpdateCategoryUseCase>();
 
 builder.Services.AddScoped<GetCustomerUseCase>();
+builder.Services.AddScoped<GetCustomersUseCase>();
+builder.Services.AddScoped<CreateCustomerUseCase>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
