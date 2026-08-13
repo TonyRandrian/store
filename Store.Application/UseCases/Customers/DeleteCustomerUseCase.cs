@@ -9,6 +9,11 @@ namespace Store.Application.UseCases.Customers
 
         public async Task Execute(int id)
         {
+            if (await CustomerRepository.IsUsed(id))
+            {
+                throw new InvalidOperationException("This customer is attributed to invoices, cannot delete");
+            }
+
             await CustomerRepository.DeleteAsync(id);
         }
     }

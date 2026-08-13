@@ -44,5 +44,10 @@ namespace Store.Infrastructure.Repositories
             Context.Customers.Remove(customer);
             await Context.SaveChangesAsync();
         }
+
+        public async Task<bool> IsUsed(int id)
+        {
+            return await Context.Invoices.AnyAsync(i => i.Customer.Id == id);
+        }
     }
 }

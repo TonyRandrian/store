@@ -77,9 +77,13 @@ namespace Store.API.Controllers
                 CustomerResponse response = await UpdateCustomerUseCase.Execute(id, request);
                 return Ok(response);
             }
-            catch(KeyNotFoundException knf)
+            catch (KeyNotFoundException knf)
             {
                 return NotFound(new { knf.Message });
+            }
+            catch (InvalidOperationException ioe)
+            {
+                return BadRequest(new { ioe.Message });
             }
         }
     }
