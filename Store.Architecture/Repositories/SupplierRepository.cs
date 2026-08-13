@@ -17,7 +17,10 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Supplier?> GetByIdAsync(int id)
         {
-            return await Context.Suppliers.FirstOrDefaultAsync(s => s.Id == id);
+            return await Context.Suppliers
+                .Include(s => s.Products)
+                .ThenInclude(p => p.Category)
+                .FirstOrDefaultAsync(s => s.Id == id);
         }
 
         public async Task<Supplier> AddAsync(Supplier supplier)

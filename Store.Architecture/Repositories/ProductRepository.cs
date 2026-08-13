@@ -13,6 +13,7 @@ namespace Store.Infrastructure.Repositories
         public async Task<List<Product>> GetAllAsync()
         {
             return await Context.Products
+                .Include(p => p.Suppliers)
                 .Include(p => p.Category)
                 .ThenInclude(c => c!.Parent)
                 .ToListAsync();
@@ -21,6 +22,7 @@ namespace Store.Infrastructure.Repositories
         public async Task<Product?> GetByIdAsync(int id)
         {
             return await Context.Products
+                .Include(p => p.Suppliers)
                 .Include(p => p.Category)
                 .ThenInclude(c => c!.Parent)
                 .FirstOrDefaultAsync(p => p.Id == id);

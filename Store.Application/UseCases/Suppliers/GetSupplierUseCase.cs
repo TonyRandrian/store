@@ -1,4 +1,5 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.DTOs.Suppliers;
+using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Suppliers
@@ -8,9 +9,12 @@ namespace Store.Application.UseCases.Suppliers
         private readonly ISupplierRepository SupplierRepository = supplierRepository;
 
 
-        public async Task<Supplier?> Execute(int id)
+        public async Task<SupplierResponse> Execute(int id)
         {
-            return await SupplierRepository.GetByIdAsync(id);
+            Supplier supplier = await SupplierRepository.GetByIdAsync(id)
+                ?? throw new KeyNotFoundException($"No supplier with the id {id} found");
+
+            return new SupplierResponse(supplier);
         }
     }
 }
