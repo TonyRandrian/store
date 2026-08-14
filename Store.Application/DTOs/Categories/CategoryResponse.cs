@@ -7,16 +7,16 @@ namespace Store.Application.DTOs.Categories
         public int Id { get; set; }
         public string Name { get; set; }
         public Int32? ParentId { get; set; }
-        public List<int> ProductsIds { get; set; }
-        public List<int> ChildrenIds { get; set; }
+        public HashSet<int> ProductsIds { get; set; }
+        public HashSet<int> ChildrenIds { get; set; }
 
 
         public CategoryResponse(
             int id, 
             string name, 
-            Int32? parentId, 
-            List<int> productsIds, 
-            List<int> childrenIds)
+            Int32? parentId,
+            HashSet<int> productsIds,
+            HashSet<int> childrenIds)
         {
             Id = id;
             Name = name;

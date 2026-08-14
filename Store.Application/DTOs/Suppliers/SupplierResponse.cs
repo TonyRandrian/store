@@ -7,10 +7,10 @@ namespace Store.Application.DTOs.Suppliers
     {
         public int Id { get; set; }
         public string Name { get; set; } = string.Empty;
-        public List<ProductResponse> Products { get; set; } = [];
+        public HashSet<ProductResponse> Products { get; set; } = [];
 
 
-        public SupplierResponse(int id, string name, List<ProductResponse> products)
+        public SupplierResponse(int id, string name, HashSet<ProductResponse> products)
         {
             Id = id;
             Name = name;

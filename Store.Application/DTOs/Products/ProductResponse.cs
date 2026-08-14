@@ -9,10 +9,10 @@ namespace Store.Application.DTOs.Products
         public string Name { get; set; }
         public decimal Price { get; set; }
         public CategoryResponse Category { get; set; }
-        public List<int> SuppliersIds { get; set; }
+        public HashSet<int> SuppliersIds { get; set; }
 
 
-        public ProductResponse(int id, string name, decimal price, CategoryResponse category, List<int> suppliersIds)
+        public ProductResponse(int id, string name, decimal price, CategoryResponse category, HashSet<int> suppliersIds)
         {
             Id = id;
             Name = name;

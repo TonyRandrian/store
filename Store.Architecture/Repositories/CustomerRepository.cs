@@ -12,12 +12,16 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<List<Customer>> GetAllAsync()
         {
-            return await Context.Customers.ToListAsync();
+            return await Context.Customers
+                .Include(c => c.Invoices)
+                .ToListAsync();
         }
 
         public async Task<Customer?> GetByIdAsync(int id)
         {
-            return await Context.Customers.FirstOrDefaultAsync(c => c.Id == id);
+            return await Context.Customers
+                .Include(c => c.Invoices)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Customer> AddAsync(Customer customer)
