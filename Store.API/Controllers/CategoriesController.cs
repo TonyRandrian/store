@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.Application.DTOs.Categories;
 using Store.Application.UseCases.Categories;
-using Store.Domain.Entities;
 
 namespace Store.API.Controllers
 {
@@ -78,7 +77,7 @@ namespace Store.API.Controllers
             }
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:Guid}")]
         public async Task<IActionResult> Update(
             [FromRoute] Guid id,
             [FromBody] UpdateCategoryRequest request)
