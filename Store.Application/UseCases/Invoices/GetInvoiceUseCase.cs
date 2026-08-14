@@ -9,7 +9,7 @@ namespace Store.Application.UseCases.Invoices
         private readonly IInvoiceRepository InvoiceRepository = invoiceRepository;
 
 
-        public async Task<InvoiceResponse> Execute(int id)
+        public async Task<InvoiceResponse> Execute(Guid id)
         {
             Invoice? invoice = await InvoiceRepository.GetByIdAsync(id) 
                 ?? throw new KeyNotFoundException($"No invoice with the id {id} found");

@@ -13,7 +13,7 @@ namespace Store.Application.UseCases.Categories
             Category? categoryParent = null;
             if (request.ParentCategoryId != null)
             {
-                int id = request.ParentCategoryId.Value;
+                Guid id = request.ParentCategoryId.Value;
 
                 if (!await CategoryRepository.Exists(id))
                 {

@@ -47,8 +47,8 @@ namespace Store.API.Controllers
             return Ok(responses);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetCategory([FromRoute] int id)
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> GetCategory([FromRoute] Guid id)
         {
             CategoryResponse? response = await GetCategoryUseCase.Execute(id);
 
@@ -60,8 +60,8 @@ namespace Store.API.Controllers
             return NotFound(new { Message = $"No category with the id {id} found" });
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        [HttpDelete("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             try
             {
@@ -80,7 +80,7 @@ namespace Store.API.Controllers
 
         [HttpPut("{id:int}")]
         public async Task<IActionResult> Update(
-            [FromRoute] int id,
+            [FromRoute] Guid id,
             [FromBody] UpdateCategoryRequest request)
         {
             try

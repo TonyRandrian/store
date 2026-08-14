@@ -5,10 +5,10 @@ namespace Store.Application.Interfaces
     public interface ICustomerRepository
     {
         public Task<List<Customer>> GetAllAsync();
-        public Task<Customer?> GetByIdAsync(int id);
+        public Task<Customer?> GetByIdAsync(Guid id);
         public Task<Customer> AddAsync(Customer customer);
         public Task<Customer> UpdateAsync(Customer customer);
-        public Task DeleteAsync(int id);
-        public Task<bool> IsUsed(int id);
+        public Task DeleteAsync(Guid id);
+        public Task<bool> IsUsed(Guid id);
     }
 }

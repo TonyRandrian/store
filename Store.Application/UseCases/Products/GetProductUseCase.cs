@@ -8,7 +8,7 @@ namespace Store.Application.UseCases.Products
     {
         private readonly IProductRepository ProductRepository = productRepository;
 
-        public async Task<ProductResponse?> Execute(int id)
+        public async Task<ProductResponse?> Execute(Guid id)
         {
             Product? product = await ProductRepository.GetByIdAsync(id);
             return product == null ? null : new(product);

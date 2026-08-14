@@ -9,7 +9,7 @@ namespace Store.Application.UseCases.Suppliers
         private readonly ISupplierRepository SupplierRepository = supplierRepository;
 
 
-        public async Task<SupplierResponse> Execute(int id)
+        public async Task<SupplierResponse> Execute(Guid id)
         {
             Supplier supplier = await SupplierRepository.GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No supplier with the id {id} found");

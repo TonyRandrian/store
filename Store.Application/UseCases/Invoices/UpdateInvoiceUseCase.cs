@@ -10,7 +10,7 @@ namespace Store.Application.UseCases.Invoices
         private readonly ICustomerRepository CustomerRepository = customerRepository;
 
 
-        public async Task<InvoiceResponse> Execute(int id, UpdateInvoiceRequest request)
+        public async Task<InvoiceResponse> Execute(Guid id, UpdateInvoiceRequest request)
         {
             // validation
             Invoice invoice = await InvoiceRepository.GetByIdAsync(id)

@@ -17,7 +17,7 @@ namespace Store.Application.UseCases.Suppliers
         {
             Supplier supplier = new(request.Name);
 
-            foreach (int id in request.ProductsIds)
+            foreach (Guid id in request.ProductsIds)
             {
                 Product? product = await ProductRepository.GetByIdAsync(id)
                     ?? throw new KeyNotFoundException($"No product with the id {id} found");

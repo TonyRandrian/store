@@ -7,7 +7,7 @@ namespace Store.Application.UseCases.Customers
         private readonly ICustomerRepository CustomerRepository = customerRepository;
 
 
-        public async Task Execute(int id)
+        public async Task Execute(Guid id)
         {
             if (await CustomerRepository.IsUsed(id))
             {

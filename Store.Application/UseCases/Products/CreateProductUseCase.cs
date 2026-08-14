@@ -22,7 +22,7 @@ namespace Store.Application.UseCases.Products
 
             // creation
             List<Supplier> suppliers = [];
-            foreach (int id in request.SuppliersIds)
+            foreach (Guid id in request.SuppliersIds)
             {
                 Supplier? supplier = await SupplierRepository.GetByIdAsync(id)
                     ?? throw new KeyNotFoundException($"No supplier with the id {id} found");

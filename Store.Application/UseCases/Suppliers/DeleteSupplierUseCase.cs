@@ -8,7 +8,7 @@ namespace Store.Application.UseCases.Suppliers
         private readonly ISupplierRepository SupplierRepository = supplierRepository;
 
 
-        public async Task Execute(int id)
+        public async Task Execute(Guid id)
         {
             Supplier? supplier = await SupplierRepository.GetByIdAsync(id);
             if (supplier != null && supplier.Products.Count > 0)

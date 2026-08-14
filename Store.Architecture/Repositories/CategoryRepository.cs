@@ -19,7 +19,7 @@ namespace Store.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Category?> GetByIdAsync(int id)
+        public async Task<Category?> GetByIdAsync(Guid id)
         {
             return await Context.Categories
                 .Include(c => c.Parent)
@@ -44,7 +44,7 @@ namespace Store.Infrastructure.Repositories
             return category;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             Category? category = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No category with the id {id} found");
@@ -53,7 +53,7 @@ namespace Store.Infrastructure.Repositories
             await Context.SaveChangesAsync();
         }
 
-        public async Task<bool> IsUsed(int id)
+        public async Task<bool> IsUsed(Guid id)
         {
             bool hasChildren = await Context.Categories.AnyAsync(c => c.Parent != null && c.Parent.Id == id);
             if (hasChildren) return true;
@@ -61,7 +61,7 @@ namespace Store.Infrastructure.Repositories
             return await Context.Products.AnyAsync(p => p.Category != null && p.Category.Id == id);
         }
 
-        public async Task<bool> Exists(int id)
+        public async Task<bool> Exists(Guid id)
         {
             return await Context.Categories.AnyAsync(c => c.Id == id);
         }

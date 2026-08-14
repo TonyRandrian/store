@@ -7,7 +7,7 @@ namespace Store.Application.UseCases.Invoices
         private readonly IInvoiceRepository InvoiceRepository = invoiceRepository;
 
 
-        public async Task Execute(int id)
+        public async Task Execute(Guid id)
         {
             await InvoiceRepository.DeleteAsync(id);
         }

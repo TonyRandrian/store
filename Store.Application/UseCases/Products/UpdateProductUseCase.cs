@@ -14,7 +14,7 @@ namespace Store.Application.UseCases.Products
         private readonly ISupplierRepository SupplierRepository = supplierRepository;
 
 
-        public async Task<ProductResponse> Excecute(int id, UpdateProductRequest request)
+        public async Task<ProductResponse> Excecute(Guid id, UpdateProductRequest request)
         {
             // validation
             Product? product = await ProductRepository.GetByIdAsync(id)
@@ -36,8 +36,8 @@ namespace Store.Application.UseCases.Products
             }
 
             /// add the suppliers that are not in the suppliers list yet
-            List<int> existingSuppliersIds = [.. product.Suppliers.Select(p => p.Id)];
-            foreach (int sid in request.SuppliersIds)
+            List<Guid> existingSuppliersIds = [.. product.Suppliers.Select(p => p.Id)];
+            foreach (Guid sid in request.SuppliersIds)
             {
                 if (!existingSuppliersIds.Contains(sid))
                 {

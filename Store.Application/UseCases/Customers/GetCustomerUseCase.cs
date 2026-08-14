@@ -9,7 +9,7 @@ namespace Store.Application.UseCases.Customers
         private readonly ICustomerRepository CustomerRepository = customerRepository;
 
 
-        public async Task<CustomerResponse?> Execute(int id)
+        public async Task<CustomerResponse?> Execute(Guid id)
         {
             Customer? customer = await CustomerRepository.GetByIdAsync(id);
 

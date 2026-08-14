@@ -7,7 +7,7 @@ namespace Store.Application.UseCases.Categories
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
 
-        public async Task<int> Execute(int id)
+        public async Task<Guid> Execute(Guid id)
         {
             if (await CategoryRepository.IsUsed(id))
                 throw new InvalidOperationException("Other Category or Product still use this category, cannot delete");

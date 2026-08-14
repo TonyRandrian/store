@@ -6,7 +6,7 @@ namespace Store.Application.UseCases.Products
     {
         private readonly IProductRepository ProductRepository = productRepository;
 
-        public async Task<int> Execute(int id)
+        public async Task<Guid> Execute(Guid id)
         {
             if (await ProductRepository.IsUsed(id))
                 throw new InvalidOperationException("This product is used by one or many suppliers, cannot delete");

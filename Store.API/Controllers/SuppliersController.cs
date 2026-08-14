@@ -39,8 +39,8 @@ namespace Store.API.Controllers
             }
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetSupplier([FromRoute] int id)
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> GetSupplier([FromRoute] Guid id)
         {
             try
             {
@@ -60,8 +60,8 @@ namespace Store.API.Controllers
             return Ok(responses);
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        [HttpDelete("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             try
             {
@@ -78,9 +78,9 @@ namespace Store.API.Controllers
             }
         }
 
-        [HttpPut("{id:int}")]
+        [HttpPut("{id:Guid}")]
         public async Task<IActionResult> Update(
-            [FromRoute] int id,
+            [FromRoute] Guid id,
             [FromBody] UpdateSupplierRequest request)
         {
             try

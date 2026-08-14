@@ -4,19 +4,19 @@ namespace Store.Application.DTOs.Categories
 {
     public class CategoryResponse
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        public Int32? ParentId { get; set; }
-        public HashSet<int> ProductsIds { get; set; }
-        public HashSet<int> ChildrenIds { get; set; }
+        public Guid? ParentId { get; set; }
+        public HashSet<Guid> ProductsIds { get; set; }
+        public HashSet<Guid> ChildrenIds { get; set; }
 
 
         public CategoryResponse(
-            int id, 
+            Guid id, 
             string name, 
-            Int32? parentId,
-            HashSet<int> productsIds,
-            HashSet<int> childrenIds)
+            Guid? parentId,
+            HashSet<Guid> productsIds,
+            HashSet<Guid> childrenIds)
         {
             Id = id;
             Name = name;

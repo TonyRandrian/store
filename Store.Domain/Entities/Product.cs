@@ -18,7 +18,7 @@
             Suppliers = [];
         }
 
-        public int Id
+        public Guid Id
         {
             get;
 

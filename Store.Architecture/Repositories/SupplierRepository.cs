@@ -18,7 +18,7 @@ namespace Store.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Supplier?> GetByIdAsync(int id)
+        public async Task<Supplier?> GetByIdAsync(Guid id)
         {
             return await Context.Suppliers
                 .Include(s => s.Products)
@@ -42,7 +42,7 @@ namespace Store.Infrastructure.Repositories
             return supplier;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             Supplier? supplier = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No supplier with the id {id} found");

@@ -19,7 +19,7 @@ namespace Store.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Product?> GetByIdAsync(int id)
+        public async Task<Product?> GetByIdAsync(Guid id)
         {
             return await Context.Products
                 .Include(p => p.Suppliers)
@@ -44,7 +44,7 @@ namespace Store.Infrastructure.Repositories
             return product;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             Product? product = await GetByIdAsync(id) 
                 ?? throw new KeyNotFoundException($"No product with the id {id} found");
@@ -53,7 +53,7 @@ namespace Store.Infrastructure.Repositories
             await Context.SaveChangesAsync();
         }
 
-        public async Task<bool> IsUsed(int id)
+        public async Task<bool> IsUsed(Guid id)
         {
             return await Context.Suppliers
                 .AnyAsync(s => s.Products.Any(p => p.Id == id));

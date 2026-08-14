@@ -5,13 +5,13 @@ namespace Store.Application.DTOs.Invoices
 {
     public class InvoiceResponse
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Reference { get; set; } = string.Empty;
         public decimal Total { get; set; }
         public CustomerResponse Customer { get; set; }
 
         
-        public InvoiceResponse(int id, string reference, decimal total, CustomerResponse customer)
+        public InvoiceResponse(Guid id, string reference, decimal total, CustomerResponse customer)
         {
             Id = id;
             Reference = reference;

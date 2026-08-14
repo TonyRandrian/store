@@ -8,7 +8,7 @@ namespace Store.Application.UseCases.Categories
     {
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
-        public async Task<CategoryResponse> Execute(int id, UpdateCategoryRequest request)
+        public async Task<CategoryResponse> Execute(Guid id, UpdateCategoryRequest request)
         {
             // validation
             Category? category= await CategoryRepository.GetByIdAsync(id)

@@ -17,7 +17,7 @@ namespace Store.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Invoice?> GetByIdAsync(int id)
+        public async Task<Invoice?> GetByIdAsync(Guid id)
         {
             return await Context.Invoices
                 .Include(i => i.Customer)
@@ -40,7 +40,7 @@ namespace Store.Infrastructure.Repositories
             return invoice;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             Invoice? invoice = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No invoice with the id {id} found");

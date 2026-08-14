@@ -5,14 +5,14 @@ namespace Store.Application.DTOs.Products
 {
     public class ProductResponse
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
         public decimal Price { get; set; }
         public CategoryResponse Category { get; set; }
-        public HashSet<int> SuppliersIds { get; set; }
+        public HashSet<Guid> SuppliersIds { get; set; }
 
 
-        public ProductResponse(int id, string name, decimal price, CategoryResponse category, HashSet<int> suppliersIds)
+        public ProductResponse(Guid id, string name, decimal price, CategoryResponse category, HashSet<Guid> suppliersIds)
         {
             Id = id;
             Name = name;

@@ -44,8 +44,8 @@ namespace Store.API.Controllers
             return Ok(response);
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<IActionResult> GetProduct([FromRoute] int id)
+        [HttpGet("{id:Guid}")]
+        public async Task<IActionResult> GetProduct([FromRoute] Guid id)
         {
             ProductResponse? response = await GetProductUseCase.Execute(id);
 
@@ -57,8 +57,8 @@ namespace Store.API.Controllers
             return NotFound(new { Message = $"No product with the id {id} found" });
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        [HttpDelete("{id:Guid}")]
+        public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             try
             {
@@ -75,8 +75,8 @@ namespace Store.API.Controllers
             }
         }
 
-        [HttpPut("{id:int}")]
-        public async Task<IActionResult> Update([FromRoute] int id,
+        [HttpPut("{id:Guid}")]
+        public async Task<IActionResult> Update([FromRoute] Guid id,
             [FromBody] UpdateProductRequest request)
         {
             try

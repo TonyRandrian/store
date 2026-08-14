@@ -17,7 +17,7 @@ namespace Store.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<Customer?> GetByIdAsync(int id)
+        public async Task<Customer?> GetByIdAsync(Guid id)
         {
             return await Context.Customers
                 .Include(c => c.Invoices)
@@ -40,7 +40,7 @@ namespace Store.Infrastructure.Repositories
             return customer;
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(Guid id)
         {
             Customer? customer = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No customer with the id {id} found");
@@ -49,7 +49,7 @@ namespace Store.Infrastructure.Repositories
             await Context.SaveChangesAsync();
         }
 
-        public async Task<bool> IsUsed(int id)
+        public async Task<bool> IsUsed(Guid id)
         {
             return await Context.Invoices.AnyAsync(i => i.Customer.Id == id);
         }

@@ -9,7 +9,7 @@ namespace Store.Application.UseCases.Customers
         private readonly ICustomerRepository CustomerRepository = customerRepository;
 
 
-        public async Task<CustomerResponse> Execute(int id, UpdateCustomerRequest request)
+        public async Task<CustomerResponse> Execute(Guid id, UpdateCustomerRequest request)
         {
             // validation
             Customer? customer = await CustomerRepository.GetByIdAsync(id)

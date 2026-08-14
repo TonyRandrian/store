@@ -4,12 +4,12 @@ namespace Store.Application.DTOs.Customers
 {
     public class CustomerResponse
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Name { get; set; }
-        public HashSet<int> InvoicesIds { get; set; }
+        public HashSet<Guid> InvoicesIds { get; set; }
 
 
-        public CustomerResponse(int id, string name, HashSet<int> invoicesIds)
+        public CustomerResponse(Guid id, string name, HashSet<Guid> invoicesIds)
         {
             Id = id;
             Name = name;

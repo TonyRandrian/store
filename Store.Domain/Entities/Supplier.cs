@@ -15,7 +15,7 @@
             Products = [];
         }
 
-        public int Id
+        public Guid Id
         {
             get;
 

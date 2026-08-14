@@ -12,7 +12,7 @@ namespace Store.Application.UseCases.Suppliers
         private readonly IProductRepository ProductRepository = productRepository;
 
 
-        public async Task<SupplierResponse> Execute(int id, UpdateSupplierRequest request)
+        public async Task<SupplierResponse> Execute(Guid id, UpdateSupplierRequest request)
         {
             // validation
             Supplier? supplier = await SupplierRepository.GetByIdAsync(id)
@@ -29,8 +29,8 @@ namespace Store.Application.UseCases.Suppliers
             }
 
             /// add only products that are not present in the supplier product list
-            List<int> existingProductsIds = [.. supplier.Products.Select(p => p.Id)];
-            foreach (int pid in request.ProductsIds)
+            List<Guid> existingProductsIds = [.. supplier.Products.Select(p => p.Id)];
+            foreach (Guid pid in request.ProductsIds)
             {
                 if (!existingProductsIds.Contains(pid))
                 {

@@ -9,7 +9,7 @@ namespace Store.Application.UseCases.Categories
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
 
-        public async Task<CategoryResponse?> Execute(int id)
+        public async Task<CategoryResponse?> Execute(Guid id)
         {
             Category? category = await CategoryRepository.GetByIdAsync(id);
 
