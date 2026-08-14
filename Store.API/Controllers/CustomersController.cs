@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Store.API.Commons;
 using Store.Application.DTOs.Customers;
 using Store.Application.UseCases.Customers;
 
@@ -21,69 +22,64 @@ namespace Store.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateCustomerRequest request)
+        public async Task<ActionResult<ApiResponse<CustomerResponse>>> Create(CreateCustomerRequest request)
         {
             CustomerResponse response = await CreateCustomerUseCase.Execute(request);
-
-            return CreatedAtAction(
-                nameof(GetCustomer),
-                new { id = response.Id },
-                response
-                );
+            return Ok(ApiResponse<CustomerResponse>.Ok(201, response, "Customer Created"));
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<IActionResult> GetCustomer([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<CustomerResponse>>> GetCustomer([FromRoute] Guid id)
         {
             CustomerResponse? response = await GetCustomerUseCase.Execute(id);
 
             if (response != null)
             {
-                return Ok(response);
+                return Ok(ApiResponse<CustomerResponse>.Ok(200, response, "Data retrieved"));
             }
 
-            return NotFound(new { Message = $"No customer with the id {id} found" });
+            return NotFound(ApiResponse<CustomerResponse>.Error(404, "Customer not found"));
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCustomers()
+        public async Task<ActionResult<ApiResponse<List<CustomerResponse>>>> GetCustomers()
         {
             List<CustomerResponse> responses = await GetCustomersUseCase.Execute();
 
-            return Ok(responses);
+            return Ok(ApiResponse<List<CustomerResponse>>.Ok(200, responses, "Customers retrieved"));
         }
 
         [HttpDelete("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
             try
             {
                 await DeleteCustomerUseCase.Execute(id);
-                return NoContent();
+                return Ok(ApiResponse<object>.Ok(204, null, "Customer deleted"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<CustomerResponse>.Error(404, knf.Message));
             }
         }
 
         [HttpPut("{id:Guid}")]
-        public async Task<IActionResult> Update(
+        public async Task<ActionResult<ApiResponse<CustomerResponse>>> Update(
             [FromRoute] Guid id,
             [FromBody] UpdateCustomerRequest request)
         {
             try
             {
                 CustomerResponse response = await UpdateCustomerUseCase.Execute(id, request);
-                return Ok(response);
+                return Ok(ApiResponse<CustomerResponse>.Ok(201, response, "Customer Updated"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<CustomerResponse>.Error(404, knf.Message));
             }
             catch (InvalidOperationException ioe)
             {
-                return BadRequest(new { ioe.Message });
+                return BadRequest(ApiResponse<CustomerResponse>.Error(400, ioe.Message));
             }
         }
     }

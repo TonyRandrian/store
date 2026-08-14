@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Store.API.Commons;
 using Store.Application.DTOs.Suppliers;
 using Store.Application.UseCases.Suppliers;
 
@@ -21,76 +22,72 @@ namespace Store.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateSupplierRequest request)
+        public async Task<ActionResult<ApiResponse<SupplierResponse>>> Create(CreateSupplierRequest request)
         {
             try
             {
                 SupplierResponse response = await CreateSupplierUseCase.Execute(request);
 
-                return CreatedAtAction(
-                    nameof(GetSupplier),
-                    new { id = response.Id },
-                    response
-                );
+                return Ok(ApiResponse<SupplierResponse>.Ok(201, response, "Supplier created"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<IActionResult> GetSupplier([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<SupplierResponse>>> GetSupplier([FromRoute] Guid id)
         {
             try
             {
                 SupplierResponse response = await GetSupplierUseCase.Execute(id);
-                return Ok(response);
+                return Ok(ApiResponse<SupplierResponse>.Ok(200, response, "Supplier retrieved"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetSuppliers()
+        public async Task<ActionResult<ApiResponse<List<SupplierResponse>>>> GetSuppliers()
         {
             List<SupplierResponse> responses = await GetSuppliersUseCase.Execute();
-            return Ok(responses);
+            return Ok(ApiResponse<List<SupplierResponse>>.Ok(200, responses, "Suppliers retrieved"));
         }
 
         [HttpDelete("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
             try
             {
                 await DeleteSupplierUseCase.Execute(id);
-                return NoContent();
+                return Ok(ApiResponse<object>.Ok(204, null, "Supplier deleted"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
             catch (InvalidOperationException ioe)
             {
-                return BadRequest(new { ioe.Message });
+                return BadRequest(ApiResponse<object>.Error(400, ioe.Message));
             }
         }
 
         [HttpPut("{id:Guid}")]
-        public async Task<IActionResult> Update(
+        public async Task<ActionResult<ApiResponse<SupplierResponse>>> Update(
             [FromRoute] Guid id,
             [FromBody] UpdateSupplierRequest request)
         {
             try
             {
                 SupplierResponse response = await UpdateSupplierUseCase.Execute(id, request);
-                return Ok(response);
+                return Ok(ApiResponse<SupplierResponse>.Ok(201, response, "Supplier updated"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
     }

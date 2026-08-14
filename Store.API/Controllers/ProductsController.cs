@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Store.API.Commons;
 using Store.Application.DTOs.Products;
 using Store.Application.UseCases.Products;
 
@@ -20,73 +21,70 @@ namespace Store.API.Controllers
         private readonly UpdateProductUseCase UpdateProductUseCase = updateProductUseCase;
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateProductRequest request)
+        public async Task<ActionResult<ApiResponse<ProductResponse>>> Create(CreateProductRequest request)
         {
             try
             {
                 ProductResponse response = await CreateProductUseCase.Execute(request);
-                return CreatedAtAction(
-                    nameof(GetProduct),
-                    new { id = response.Id },
-                    response);
+                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product created"));
             }
             catch (KeyNotFoundException knf)
             {
-                return BadRequest(new { knf.Message });
+                return BadRequest(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetProducts()
+        public async Task<ActionResult<ApiResponse<List<ProductResponse>>>> GetProducts()
         {
-            List<ProductResponse> response = await GetProductsUseCase.Execute();
+            List<ProductResponse> responses = await GetProductsUseCase.Execute();
 
-            return Ok(response);
+            return Ok(ApiResponse<List<ProductResponse>>.Ok(200, responses, "Products retrieved"));
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<IActionResult> GetProduct([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<ProductResponse>>> GetProduct([FromRoute] Guid id)
         {
             ProductResponse? response = await GetProductUseCase.Execute(id);
 
             if (response != null)
             {
-                return Ok(response);
+                return Ok(ApiResponse<ProductResponse>.Ok(200, response, "Product retrieved"));
             }
 
-            return NotFound(new { Message = $"No product with the id {id} found" });
+            return NotFound(ApiResponse<object>.Error(404, $"No product with the id {id} found"));
         }
 
         [HttpDelete("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
             try
             {
                 await DeleteProductUseCase.Execute(id);
-                return NoContent();
+                return Ok(ApiResponse<object>.Ok(204, null, "Product deleted"));
             }
             catch (InvalidOperationException ioe)
             {
-                return BadRequest(new { ioe.Message });
+                return BadRequest(ApiResponse<object>.Error(400, ioe.Message));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpPut("{id:Guid}")]
-        public async Task<IActionResult> Update([FromRoute] Guid id,
+        public async Task<ActionResult<ApiResponse<ProductResponse>>> Update([FromRoute] Guid id,
             [FromBody] UpdateProductRequest request)
         {
             try
             {
                 ProductResponse response = await UpdateProductUseCase.Excecute(id, request);
-                return Ok(response);
+                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product updated"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
     }

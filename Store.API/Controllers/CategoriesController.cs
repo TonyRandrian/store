@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Store.API.Commons;
 using Store.Application.DTOs.Categories;
 using Store.Application.UseCases.Categories;
 
@@ -21,79 +22,75 @@ namespace Store.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create(CreateCategoryRequest request)
+        public async Task<ActionResult<ApiResponse<CategoryResponse>>> Create(CreateCategoryRequest request)
         {
             try
             {
                 CategoryResponse response = await CreateCategoryUseCase.Execute(request);
-                return CreatedAtAction(
-                    nameof(GetCategory),
-                    new { id = response.Id },
-                    response
-                    );
+                return Ok(ApiResponse<CategoryResponse>.Ok(201, response, "Category created successfully"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetCategories()
+        public async Task<ActionResult<ApiResponse<List<CategoryResponse>>>> GetCategories()
         {
             List<CategoryResponse> responses = await GetCategoriesUseCase.Execute();
 
-            return Ok(responses);
+            return Ok(ApiResponse<List<CategoryResponse>>.Ok(200, responses, "Categories retrieved"));
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<IActionResult> GetCategory([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<CategoryResponse>>> GetCategory([FromRoute] Guid id)
         {
             CategoryResponse? response = await GetCategoryUseCase.Execute(id);
 
             if (response != null)
             {
-                return Ok(response);
+                return Ok(ApiResponse<CategoryResponse>.Ok(200, response, "Category retrieved"));
             }
 
-            return NotFound(new { Message = $"No category with the id {id} found" });
+            return NotFound(ApiResponse<object>.Error(404, $"No category with the id {id} found"));
         }
 
         [HttpDelete("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
             try
             {
                 await DeleteCategoryUseCase.Execute(id);
-                return NoContent();
+                return Ok(ApiResponse<object>.Ok(204, null, "Category deleted"));
             }
             catch (InvalidOperationException ioe)
             {
-                return BadRequest(new { ioe.Message });
+                return BadRequest(ApiResponse<object>.Error(400, ioe.Message));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpPut("{id:Guid}")]
-        public async Task<IActionResult> Update(
+        public async Task<ActionResult<ApiResponse<CategoryResponse>>> Update(
             [FromRoute] Guid id,
             [FromBody] UpdateCategoryRequest request)
         {
             try
             {
                 CategoryResponse response = await UpdateCategoryUseCase.Execute(id, request);
-                return Ok(response);
+                return Ok(ApiResponse<CategoryResponse>.Ok(201, response, "Category updated"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<CategoryResponse>.Error(404, knf.Message));
             }
             catch (InvalidOperationException ioe)
             {
-                return BadRequest(new { ioe.Message });
+                return BadRequest(ApiResponse<CategoryResponse>.Error(400, ioe.Message));
             }
         }
     }

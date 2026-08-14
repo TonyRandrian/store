@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Store.API.Commons;
 using Store.Application.DTOs.Invoices;
 using Store.Application.UseCases.Invoices;
 
@@ -21,71 +22,67 @@ namespace Store.API.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreateInvoiceRequest request)
+        public async Task<ActionResult<InvoiceResponse>> Create([FromBody] CreateInvoiceRequest request)
         {
             try
             {
                 InvoiceResponse response = await CreateInvoiceUseCase.Execute(request);
-                return CreatedAtAction(
-                    nameof(GetInvoice),
-                    new { id = response.Id },
-                    response
-                    );
+                return Ok(ApiResponse<InvoiceResponse>.Ok(201, response, "Invoice created"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpGet("{id:Guid}")]
-        public async Task<IActionResult> GetInvoice([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<InvoiceResponse>>> GetInvoice([FromRoute] Guid id)
         {
             try
             {
                 InvoiceResponse response = await GetInvoiceUseCase.Execute(id);
-                return Ok(response);
+                return Ok(ApiResponse<InvoiceResponse>.Ok(200, response, "Invoice retrieved"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetInvoices()
+        public async Task<ActionResult<ApiResponse<List<InvoiceResponse>>>> GetInvoices()
         {
             List<InvoiceResponse> responses = await GetInvoicesUseCase.Execute();
-            return Ok(responses);
+            return Ok(ApiResponse<List<InvoiceResponse>>.Ok(200, responses, "Invoices retrieved"));
         }
-
+        
         [HttpDelete("{id:Guid}")]
-        public async Task<IActionResult> Delete([FromRoute] Guid id)
+        public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
             try
             {
                 await DeleteInvoiceUseCase.Execute(id);
-                return NoContent();
+                return Ok(ApiResponse<object>.Ok(204, null, "Invoice deleted"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
 
         [HttpPut("{id:Guid}")]
-        public async Task<IActionResult> Update(
+        public async Task<ActionResult<ApiResponse<InvoiceResponse>>> Update(
             [FromRoute] Guid id,
             [FromBody] UpdateInvoiceRequest request)
         {
             try
             {
                 InvoiceResponse response = await UpdateInvoiceUseCase.Execute(id, request);
-                return Ok(response);
+                return Ok(ApiResponse<InvoiceResponse>.Ok(201, response, "Invoice udpdated"));
             }
             catch (KeyNotFoundException knf)
             {
-                return NotFound(new { knf.Message });
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
     }
