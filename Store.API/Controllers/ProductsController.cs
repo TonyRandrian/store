@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
+using Store.Application.DTOs.Categories;
 using Store.Application.DTOs.Products;
 using Store.Application.UseCases.Products;
 
@@ -89,6 +90,19 @@ namespace Store.API.Controllers
             {
                 return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
+        }
+
+        [HttpGet("{id:Guid}/category")]
+        public async Task<ActionResult<ApiResponse<CategoryResponse>>> GetProductCategory([FromRoute] Guid id)
+        {
+            ProductResponse? response = await GetProductUseCase.Execute(id);
+
+            if (response == null)
+            {
+                return NotFound(ApiResponse<object>.Error(404, $"No product with the id {id} found"));
+            }
+
+            return Ok(ApiResponse<CategoryResponse>.Ok(200, response.Category, "Product retrieved"));
         }
     }
 }
