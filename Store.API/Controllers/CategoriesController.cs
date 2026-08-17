@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Categories;
@@ -8,6 +9,8 @@ namespace Store.API.Controllers
 {
     [ApiController]
     [Route("api/categories")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class CategoriesController(
         CreateCategoryUseCase createCategoryUseCase,
         GetCategoriesUseCase getCategoriesUseCase,

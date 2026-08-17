@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Suppliers;
@@ -8,6 +9,8 @@ namespace Store.API.Controllers
 {
     [ApiController]
     [Route("api/suppliers")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class SuppliersController(
         GetSupplierUseCase getSupplierUseCase,
         CreateSupplierUseCase createSupplierUseCase,

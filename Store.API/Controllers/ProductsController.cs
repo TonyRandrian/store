@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Categories;
@@ -8,7 +9,9 @@ using Store.Application.UseCases.Products;
 namespace Store.API.Controllers
 {
     [ApiController]
-    [Route("api/products")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/products")]
     public class ProductsController(
         CreateProductUseCase createProductUseCase,
         GetProductsUseCase getProductsUseCase,
@@ -93,6 +96,7 @@ namespace Store.API.Controllers
         }
 
         [HttpGet("{id:Guid}/category")]
+        [MapToApiVersion("2.0")]
         public async Task<ActionResult<ApiResponse<CategoryResponse>>> GetProductCategory([FromRoute] Guid id)
         {
             ProductResponse? response = await GetProductUseCase.Execute(id);
