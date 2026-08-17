@@ -10,5 +10,6 @@ namespace Store.Infrastructure.Persistence
         public DbSet<Invoice> Invoices => Set<Invoice>();
         public DbSet<Product> Products => Set<Product>();
         public DbSet<Supplier> Suppliers => Set<Supplier>();
+        public DbSet<InvoiceDetail> InvoiceDetails => Set<InvoiceDetail>();
     }
 }
