@@ -1,4 +1,5 @@
-﻿using Store.Application.DTOs.Categories;
+﻿using Store.Application.Commons;
+using Store.Application.DTOs.Categories;
 using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
@@ -9,14 +10,19 @@ namespace Store.Application.UseCases.Categories
         private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
 
-        public async Task<List<CategoryResponse>> Execute()
+        public async Task<PagedResult<CategoryResponse>> Execute(int pageNumber, int pageSize)
         {
-            List<CategoryResponse> result = [];
-            List<Category> categories = await CategoryRepository.GetAllAsync();
-
-            foreach (Category category in categories)
+            PagedResult<Category> categories = await CategoryRepository.GetAllAsync(pageNumber, pageSize);
+            PagedResult<CategoryResponse> result = new()
             {
-                result.Add(new CategoryResponse(category));
+                TotalRecords = categories.TotalRecords,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
+
+            foreach (Category category in categories.Data)
+            {
+                result.Data.Add(new CategoryResponse(category));
             }
 
             return result;

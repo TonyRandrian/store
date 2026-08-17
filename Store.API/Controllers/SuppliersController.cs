@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
+using Store.Application.Commons;
 using Store.Application.DTOs.Suppliers;
 using Store.Application.UseCases.Suppliers;
 
@@ -51,10 +52,12 @@ namespace Store.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<SupplierResponse>>>> GetSuppliers()
+        public async Task<ActionResult<ApiResponse<PagedResult<SupplierResponse>>>> GetSuppliers(
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
         {
-            List<SupplierResponse> responses = await GetSuppliersUseCase.Execute();
-            return Ok(ApiResponse<List<SupplierResponse>>.Ok(200, responses, "Suppliers retrieved"));
+            PagedResult<SupplierResponse> responses = await GetSuppliersUseCase.Execute(pageNum, pageSize);
+            return Ok(ApiResponse<PagedResult<SupplierResponse>>.Ok(200, responses, "Suppliers retrieved"));
         }
 
         [HttpDelete("{id:Guid}")]

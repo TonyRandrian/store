@@ -1,4 +1,5 @@
-﻿using Store.Application.DTOs.Customers;
+﻿using Store.Application.Commons;
+using Store.Application.DTOs.Customers;
 using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
@@ -9,17 +10,22 @@ namespace Store.Application.UseCases.Customers
         private readonly ICustomerRepository CustomerRepository = customerRepository;
 
         
-        public async Task<List<CustomerResponse>> Execute()
+        public async Task<PagedResult<CustomerResponse>> Execute(int pageNum, int pageSize)
         {
-            List<Customer> customers = await CustomerRepository.GetAllAsync();
-            List<CustomerResponse> responses = [];
-
-            foreach (Customer customer in customers)
+            PagedResult<Customer> customers = await CustomerRepository.GetAllAsync(pageNum, pageSize);
+            PagedResult<CustomerResponse> result = new()
             {
-                responses.Add(new CustomerResponse(customer));
+                PageNumber = pageNum,
+                PageSize = pageSize,
+                TotalRecords = customers.TotalRecords
+            };
+
+            foreach (Customer customer in customers.Data)
+            {
+                result.Data.Add(new CustomerResponse(customer));
             }
 
-            return responses;
+            return result;
         }
     }
 }

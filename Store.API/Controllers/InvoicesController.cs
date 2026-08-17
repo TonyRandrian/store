@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
+using Store.Application.Commons;
 using Store.Application.DTOs.Invoices;
 using Store.Application.UseCases.Invoices;
 
@@ -50,10 +51,12 @@ namespace Store.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<InvoiceResponse>>>> GetInvoices()
+        public async Task<ActionResult<ApiResponse<PagedResult<InvoiceResponse>>>> GetInvoices(
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
         {
-            List<InvoiceResponse> responses = await GetInvoicesUseCase.Execute();
-            return Ok(ApiResponse<List<InvoiceResponse>>.Ok(200, responses, "Invoices retrieved"));
+            PagedResult<InvoiceResponse> responses = await GetInvoicesUseCase.Execute(pageNum, pageSize);
+            return Ok(ApiResponse<PagedResult<InvoiceResponse>>.Ok(200, responses, "Invoices retrieved"));
         }
         
         [HttpDelete("{id:Guid}")]

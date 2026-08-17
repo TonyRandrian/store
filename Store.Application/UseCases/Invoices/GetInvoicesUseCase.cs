@@ -1,4 +1,5 @@
-﻿using Store.Application.DTOs.Invoices;
+﻿using Store.Application.Commons;
+using Store.Application.DTOs.Invoices;
 using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
@@ -9,17 +10,22 @@ namespace Store.Application.UseCases.Invoices
         private readonly IInvoiceRepository InvoiceRepository = invoiceRepository;
 
 
-        public async Task<List<InvoiceResponse>> Execute()
+        public async Task<PagedResult<InvoiceResponse>> Execute(int pageNum, int pageSize)
         {
-            List<Invoice> invoices = await InvoiceRepository.GetAllAsync();
-            List<InvoiceResponse> responses = [];
-
-            foreach (Invoice invoice in invoices)
+            PagedResult<Invoice> invoices = await InvoiceRepository.GetAllAsync(pageNum, pageSize);
+            PagedResult<InvoiceResponse> result = new()
             {
-                responses.Add(new InvoiceResponse(invoice));
+                PageNumber = pageNum,
+                PageSize = pageSize,
+                TotalRecords = invoices.TotalRecords
+            };
+
+            foreach (Invoice invoice in invoices.Data)
+            {
+                result.Data.Add(new InvoiceResponse(invoice));
             }
 
-            return responses;
+            return result;
         }
     }
 }

@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Store.API.Commons;
+using Store.Application.Commons;
 using Store.Application.DTOs.Customers;
 using Store.Application.UseCases.Customers;
 
@@ -42,11 +44,13 @@ namespace Store.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<CustomerResponse>>>> GetCustomers()
+        public async Task<ActionResult<ApiResponse<PagedResult<CustomerResponse>>>> GetCustomers(
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
         {
-            List<CustomerResponse> responses = await GetCustomersUseCase.Execute();
+            PagedResult<CustomerResponse> responses = await GetCustomersUseCase.Execute(pageNum, pageSize);
 
-            return Ok(ApiResponse<List<CustomerResponse>>.Ok(200, responses, "Customers retrieved"));
+            return Ok(ApiResponse<PagedResult<CustomerResponse>>.Ok(200, responses, "Customers retrieved"));
         }
 
         [HttpDelete("{id:Guid}")]

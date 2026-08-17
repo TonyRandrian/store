@@ -1,4 +1,5 @@
-﻿using Store.Application.DTOs.Suppliers;
+﻿using Store.Application.Commons;
+using Store.Application.DTOs.Suppliers;
 using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
@@ -9,17 +10,22 @@ namespace Store.Application.UseCases.Suppliers
         private readonly ISupplierRepository SupplierRepository = supplierRepository;
 
 
-        public async Task<List<SupplierResponse>> Execute()
+        public async Task<PagedResult<SupplierResponse>> Execute(int pageNum, int pageSize)
         {
-            List<Supplier> suppliers = await SupplierRepository.GetAllAsync();
-            List<SupplierResponse> responses = [];
-
-            foreach (Supplier supplier in suppliers)
+            PagedResult<Supplier> suppliers = await SupplierRepository.GetAllAsync(pageNum, pageSize);
+            PagedResult<SupplierResponse> result = new()
             {
-                responses.Add(new SupplierResponse(supplier));
+                PageNumber = pageNum,
+                PageSize = pageSize,
+                TotalRecords = suppliers.TotalRecords
+            };
+
+            foreach (Supplier supplier in suppliers.Data)
+            {
+                result.Data.Add(new SupplierResponse(supplier));
             }
 
-            return responses;
+            return result;
         }
     }
 }
