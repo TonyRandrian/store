@@ -1,10 +1,11 @@
-﻿using Store.Domain.Entities;
+﻿using Store.Application.Commons;
+using Store.Domain.Entities;
 
 namespace Store.Application.Interfaces
 {
     public interface IProductRepository
     {
-        public Task<List<Product>> GetAllAsync();
+        public Task<PagedResult<Product>> GetAllAsync(int pageNum, int pageSize);
         public Task<Product?> GetByIdAsync(Guid id);
         public Task<Product> AddAsync(Product product);
         public Task<Product> UpdateAsync(Product product);

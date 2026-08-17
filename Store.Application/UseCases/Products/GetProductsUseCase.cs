@@ -1,4 +1,5 @@
-﻿using Store.Application.DTOs.Products;
+﻿using Store.Application.Commons;
+using Store.Application.DTOs.Products;
 using Store.Application.Interfaces;
 using Store.Domain.Entities;
 
@@ -8,14 +9,19 @@ namespace Store.Application.UseCases.Products
     {
         private readonly IProductRepository ProductRepository = productRepository;
 
-        public async Task<List<ProductResponse>> Execute()
+        public async Task<PagedResult<ProductResponse>> Execute(int pageNum, int pageSize)
         {
-            List<Product> products = await ProductRepository.GetAllAsync();
-            List<ProductResponse> result = [];
-
-            foreach (Product product in products)
+            PagedResult<Product> products = await ProductRepository.GetAllAsync(pageNum, pageSize);
+            PagedResult<ProductResponse> result = new()
             {
-                result.Add(new ProductResponse(product));
+                PageNumber = pageNum,
+                PageSize = pageSize,
+                TotalRecords = products.TotalRecords
+            };
+
+            foreach (Product product in products.Data)
+            {
+                result.Data.Add(new ProductResponse(product));
             }
 
             return result;

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
+using Store.Application.Commons;
 using Store.Application.DTOs.Products;
 using Store.Application.UseCases.Products;
 
@@ -35,11 +36,13 @@ namespace Store.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<ProductResponse>>>> GetProducts()
+        public async Task<ActionResult<ApiResponse<PagedResult<ProductResponse>>>> GetProducts(
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
         {
-            List<ProductResponse> responses = await GetProductsUseCase.Execute();
+            PagedResult<ProductResponse> responses = await GetProductsUseCase.Execute(pageNum, pageSize);
 
-            return Ok(ApiResponse<List<ProductResponse>>.Ok(200, responses, "Products retrieved"));
+            return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, responses, "Products retrieved"));
         }
 
         [HttpGet("{id:Guid}")]
