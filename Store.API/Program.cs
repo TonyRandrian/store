@@ -8,8 +8,20 @@ using Store.Application.UseCases.Customers;
 using Store.Application.UseCases.Invoices;
 using Store.Application.UseCases.Suppliers;
 using Store.Application.UseCases.InvoicesDetails;
+using Asp.Versioning;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0); // API v1 by default
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 // Controllers
 builder.Services.AddControllers();
