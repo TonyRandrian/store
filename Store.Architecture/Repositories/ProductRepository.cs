@@ -60,7 +60,7 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            Product? product = await GetByIdAsync(id) 
+            Product? product = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No product with the id {id} found");
 
             Context.Products.Remove(product);
@@ -71,6 +71,28 @@ namespace Store.Infrastructure.Repositories
         {
             return await Context.Suppliers
                 .AnyAsync(s => s.Products.Any(p => p.Id == id));
+        }
+
+        public async Task<PagedResult<Product>> GetCategoryProducts(Guid categoryId, int pageNumber, int pageSize)
+        {
+            IQueryable<Product> query = Context.Products.Where(p => p.Category.Id == categoryId);
+
+            int totalRecords = await query.CountAsync();
+            List<Product> products = await query
+                .Include(p => p.Category)
+                .AsNoTracking()
+                .OrderBy(p => p.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Product>()
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Data = products,
+                TotalRecords = totalRecords
+            };
         }
     }
 }
