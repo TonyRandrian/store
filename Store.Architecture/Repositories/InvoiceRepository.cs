@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Store.Application.Commons;
 using Store.Application.Interfaces;
 using Store.Domain.Entities;
 using Store.Infrastructure.Persistence;
@@ -10,11 +11,24 @@ namespace Store.Infrastructure.Repositories
         private readonly StoreDbContext Context = context;
 
             
-        public async Task<List<Invoice>> GetAllAsync()
+        public async Task<PagedResult<Invoice>> GetAllAsync(int pageNum, int pageSize)
         {
-            return await Context.Invoices
+            int totalRecords = await Context.Invoices.CountAsync();
+            List<Invoice> invoices = await Context.Invoices
                 .Include(i => i.Customer)
+                .AsNoTracking()
+                .OrderBy(i => i.Id)
+                .Skip((pageNum - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
+
+            return new PagedResult<Invoice>()
+            {
+                PageNumber = pageNum,
+                PageSize = pageSize,
+                Data = invoices,
+                TotalRecords = totalRecords
+            };
         }
 
         public async Task<Invoice?> GetByIdAsync(Guid id)
