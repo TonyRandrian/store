@@ -1,10 +1,11 @@
-﻿using Store.Domain.Entities;
+﻿using Store.Application.Commons;
+using Store.Domain.Entities;
 
 namespace Store.Application.Interfaces
 {
     public interface ICategoryRepository
     {
-        public Task<List<Category>> GetAllAsync();
+        public Task<PagedResult<Category>> GetAllAsync(int pageNumber, int pageSize);
         public Task<Category?> GetByIdAsync(Guid id);
         public Task<Category> AddAsync(Category category);
         public Task<Category> UpdateAsync(Category category);

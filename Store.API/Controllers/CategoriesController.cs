@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
+using Store.Application.Commons;
 using Store.Application.DTOs.Categories;
 using Store.Application.UseCases.Categories;
 
@@ -36,11 +37,13 @@ namespace Store.API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<List<CategoryResponse>>>> GetCategories()
+        public async Task<ActionResult<ApiResponse<PagedResult<CategoryResponse>>>> GetCategories(
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
         {
-            List<CategoryResponse> responses = await GetCategoriesUseCase.Execute();
+            PagedResult<CategoryResponse> responses = await GetCategoriesUseCase.Execute(pageNum, pageSize);
 
-            return Ok(ApiResponse<List<CategoryResponse>>.Ok(200, responses, "Categories retrieved"));
+            return Ok(ApiResponse<PagedResult<CategoryResponse>>.Ok(200, responses, "Categories retrieved"));
         }
 
         [HttpGet("{id:Guid}")]
