@@ -1,10 +1,11 @@
-﻿using Store.Domain.Entities;
+﻿using Store.Application.Commons;
+using Store.Domain.Entities;
 
 namespace Store.Application.Interfaces
 {
     public interface ICustomerRepository
     {
-        public Task<List<Customer>> GetAllAsync();
+        public Task<PagedResult<Customer>> GetAllAsync(int pageNum, int pageSize);
         public Task<Customer?> GetByIdAsync(Guid id);
         public Task<Customer> AddAsync(Customer customer);
         public Task<Customer> UpdateAsync(Customer customer);
