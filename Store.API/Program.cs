@@ -76,6 +76,7 @@ builder.Services.AddScoped<CreateSupplierUseCase>();
 builder.Services.AddScoped<GetSuppliersUseCase>();
 builder.Services.AddScoped<DeleteSupplierUseCase>();
 builder.Services.AddScoped<UpdateSupplierUseCase>();
+builder.Services.AddScoped<GetSupplierProductsUseCase>();
 
 builder.Services.AddScoped<GetInvoiceDetailUseCase>();
 builder.Services.AddScoped<CreateInvoiceDetailUseCase>();

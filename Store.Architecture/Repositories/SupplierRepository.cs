@@ -9,7 +9,7 @@ namespace Store.Infrastructure.Repositories
     public class SupplierRepository(StoreDbContext store) : ISupplierRepository
     {
         private readonly StoreDbContext Context = store;
-        
+
 
         public async Task<PagedResult<Supplier>> GetAllAsync(int pageNum, int pageSize)
         {
@@ -62,6 +62,26 @@ namespace Store.Infrastructure.Repositories
 
             Context.Suppliers.Remove(supplier);
             await Context.SaveChangesAsync();
+        }
+
+        public async Task<PagedResult<Product>> GetSupplierProducts(Guid supplierId, int pageNum, int pageSize)
+        {
+            IQueryable<Product> query = Context.Suppliers
+                .Where(s => s.Id == supplierId)
+                .SelectMany(s => s.Products);
+
+            int totalRecords = await query.CountAsync();
+            List<Product> products = await query
+                .Include(p => p.Category)
+                .ToListAsync();
+
+            return new PagedResult<Product>()
+            {
+                PageNumber = pageNum,
+                PageSize = pageSize,
+                TotalRecords = totalRecords,
+                Data = products
+            };
         }
     }
 }
