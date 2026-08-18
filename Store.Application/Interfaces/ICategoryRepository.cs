@@ -13,5 +13,6 @@ namespace Store.Application.Interfaces
         public Task<bool> IsUsed(Guid id);
         public Task<bool> Exists(Guid id);
         public Task<PagedResult<Product>> GetCategoryProducts(Guid id, int pageNumber, int pageSize);
+        public Task<PagedResult<Category>?> GetCategoryChildren(Guid categoryId, int pageNum, int pageSize);
     }
 }

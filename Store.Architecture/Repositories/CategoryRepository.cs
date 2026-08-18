@@ -102,5 +102,31 @@ namespace Store.Infrastructure.Repositories
                 TotalRecords = totalRecords
             };
         }
+
+        public async Task<PagedResult<Category>?> GetCategoryChildren(Guid categoryId, int pageNum, int pageSize)
+        {
+            IQueryable<Category> query = Context.Categories
+                .Where(c => c.Id == categoryId)
+                .SelectMany(c => c.Children)
+                .Include(c => c.Parent)
+                .Include(c => c.Products);
+
+            int totalRecords = await query.CountAsync();
+            List<Category>? categories = await query
+                .OrderBy(c => c.Id)
+                .Skip((pageNum - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return categories == null
+                ? null
+                : new PagedResult<Category>()
+                {
+                    PageNumber = pageNum,
+                    PageSize = pageSize,
+                    Data = categories,
+                    TotalRecords = totalRecords
+                };
+        }
     }
 }

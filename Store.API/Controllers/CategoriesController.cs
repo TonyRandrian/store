@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Categories;
@@ -18,7 +19,8 @@ namespace Store.API.Controllers
         GetCategoryUseCase getCategoryUseCase,
         DeleteCategoryUseCase deleteCategoryUseCase,
         UpdateCategoryUseCase updateCategoryUseCase,
-        GetCategoryProductsUseCase getCategoryProductsUseCase) : ControllerBase
+        GetCategoryProductsUseCase getCategoryProductsUseCase,
+        GetCategoryChildrenUseCase getCategoryChildrenUseCase) : ControllerBase
     {
         private readonly CreateCategoryUseCase CreateCategoryUseCase = createCategoryUseCase;
         private readonly GetCategoriesUseCase GetCategoriesUseCase = getCategoriesUseCase;
@@ -26,6 +28,7 @@ namespace Store.API.Controllers
         private readonly DeleteCategoryUseCase DeleteCategoryUseCase = deleteCategoryUseCase;
         private readonly UpdateCategoryUseCase UpdateCategoryUseCase = updateCategoryUseCase;
         private readonly GetCategoryProductsUseCase GetCategoryProductsUseCase = getCategoryProductsUseCase;
+        private readonly GetCategoryChildrenUseCase GetCategoryChildrenUseCase = getCategoryChildrenUseCase;
 
 
         [HttpPost]
@@ -112,6 +115,23 @@ namespace Store.API.Controllers
         {
             PagedResult<ProductResponse> responses = await GetCategoryProductsUseCase.Execute(productId, pageNum, pageSize);
             return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, responses, "Products retrieved"));
+        }
+
+        [HttpGet("{categoryId:Guid}/children")]
+        public async Task<ActionResult<ApiResponse<PagedResult<CategoryResponse>>>> GetCategoryChildren(
+            [FromRoute] Guid categoryId,
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
+        {
+            try
+            {
+                PagedResult<CategoryResponse> responses = await GetCategoryChildrenUseCase.Execute(categoryId, pageNum, pageSize);
+                return Ok(ApiResponse<PagedResult<CategoryResponse>>.Ok(200, responses, "Category retrieved"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
         }
     }
 }
