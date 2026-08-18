@@ -103,14 +103,14 @@ namespace Store.API.Controllers
             }
         }
 
-        [HttpGet("{id:Guid}/products")]
+        [HttpGet("{productId:Guid}/products")]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult<ApiResponse<PagedResult<ProductResponse>>>> GetProducts(
-            [FromRoute] Guid id,
+            [FromRoute] Guid productId,
             [FromQuery] int pageNum,
             [FromQuery] int pageSize)
         {
-            PagedResult<ProductResponse> responses = await GetCategoryProductsUseCase.Execute(id, pageNum, pageSize);
+            PagedResult<ProductResponse> responses = await GetCategoryProductsUseCase.Execute(productId, pageNum, pageSize);
             return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, responses, "Products retrieved"));
         }
     }
