@@ -8,8 +8,21 @@ using Store.Application.UseCases.Customers;
 using Store.Application.UseCases.Invoices;
 using Store.Application.UseCases.Suppliers;
 using Store.Application.UseCases.InvoicesDetails;
+using Asp.Versioning;
+using Microsoft.OpenApi;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0); // API v1 by default
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+}).AddApiExplorer(options =>
+{
+    options.GroupNameFormat = "'v'VVV";
+    options.SubstituteApiVersionInUrl = true;
+});
 
 // Controllers
 builder.Services.AddControllers();
@@ -36,12 +49,15 @@ builder.Services.AddScoped<GetProductsUseCase>();
 builder.Services.AddScoped<GetProductUseCase>();
 builder.Services.AddScoped<DeleteProductUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();
+builder.Services.AddScoped<GetProductCategoryUseCase>();
 
 builder.Services.AddScoped<CreateCategoryUseCase>();
 builder.Services.AddScoped<GetCategoriesUseCase>();
 builder.Services.AddScoped<GetCategoryUseCase>();
 builder.Services.AddScoped<DeleteCategoryUseCase>();
 builder.Services.AddScoped<UpdateCategoryUseCase>();
+builder.Services.AddScoped<GetCategoryProductsUseCase>();
+builder.Services.AddScoped<GetCategoryChildrenUseCase>();
 
 builder.Services.AddScoped<GetCustomerUseCase>();
 builder.Services.AddScoped<GetCustomersUseCase>();
@@ -69,7 +85,20 @@ builder.Services.AddScoped<UpdateInvoiceDetailUseCase>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Store API",
+        Version = "v1"
+    });
+
+    options.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Title = "Store API",
+        Version ="v2"
+    });
+});
 
 var app = builder.Build();
 
@@ -78,7 +107,11 @@ if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/swagger/v1/swagger.json", "Store API V1");
+        options.SwaggerEndpoint("/swagger/v2/swagger.json", "Store API V2");
+    });
 }
 
 app.UseHttpsRedirection();

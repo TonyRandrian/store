@@ -11,5 +11,6 @@ namespace Store.Application.Interfaces
         public Task<Product> UpdateAsync(Product product);
         public Task DeleteAsync(Guid id);
         public Task<bool> IsUsed(Guid id);
+        public Task<Category?> GetProductCategory(Guid productId);
     }
 }

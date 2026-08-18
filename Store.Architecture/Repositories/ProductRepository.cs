@@ -60,7 +60,7 @@ namespace Store.Infrastructure.Repositories
 
         public async Task DeleteAsync(Guid id)
         {
-            Product? product = await GetByIdAsync(id) 
+            Product? product = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No product with the id {id} found");
 
             Context.Products.Remove(product);
@@ -71,6 +71,16 @@ namespace Store.Infrastructure.Repositories
         {
             return await Context.Suppliers
                 .AnyAsync(s => s.Products.Any(p => p.Id == id));
+        }
+
+        public async Task<Category?> GetProductCategory(Guid productId)
+        {
+            Category? category = await Context.Products
+                .Where(p => p.Id == productId)
+                .Select(p => p.Category)
+                .FirstOrDefaultAsync();
+
+            return category;
         }
     }
 }

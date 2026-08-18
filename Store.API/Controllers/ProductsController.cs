@@ -1,25 +1,31 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
+using Store.Application.DTOs.Categories;
 using Store.Application.DTOs.Products;
 using Store.Application.UseCases.Products;
 
 namespace Store.API.Controllers
 {
     [ApiController]
-    [Route("api/products")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/products")]
     public class ProductsController(
         CreateProductUseCase createProductUseCase,
         GetProductsUseCase getProductsUseCase,
         GetProductUseCase getProductUseCase,
         DeleteProductUseCase deleteProductUseCase,
-        UpdateProductUseCase updateProductUseCase) : ControllerBase
+        UpdateProductUseCase updateProductUseCase,
+        GetProductCategoryUseCase getProductCategoryUseCase) : ControllerBase
     {
         private readonly CreateProductUseCase CreateProductUseCase = createProductUseCase;
         private readonly GetProductsUseCase GetProductsUseCase = getProductsUseCase;
         private readonly GetProductUseCase GetProductUseCase = getProductUseCase;
         private readonly DeleteProductUseCase DeleteProductUseCase = deleteProductUseCase;
         private readonly UpdateProductUseCase UpdateProductUseCase = updateProductUseCase;
+        private readonly GetProductCategoryUseCase GetProductCategoryUseCase = getProductCategoryUseCase;
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<ProductResponse>>> Create(CreateProductRequest request)
@@ -84,6 +90,21 @@ namespace Store.API.Controllers
             {
                 ProductResponse response = await UpdateProductUseCase.Excecute(id, request);
                 return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product updated"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+        }
+
+        [HttpGet("{id:Guid}/category")]
+        [MapToApiVersion("2.0")]
+        public async Task<ActionResult<ApiResponse<CategoryResponse>>> GetProductCategory([FromRoute] Guid id)
+        {
+            try
+            {
+                CategoryResponse response = await GetProductCategoryUseCase.Execute(id);
+                return Ok(ApiResponse<CategoryResponse>.Ok(200, response, "Category retrieved"));
             }
             catch (KeyNotFoundException knf)
             {

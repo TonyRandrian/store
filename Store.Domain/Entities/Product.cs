@@ -36,7 +36,7 @@
             }
         }
 
-        public Category? Category
+        public Category Category
         {
             get;
 
