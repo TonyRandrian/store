@@ -17,13 +17,15 @@ namespace Store.API.Controllers
         GetProductsUseCase getProductsUseCase,
         GetProductUseCase getProductUseCase,
         DeleteProductUseCase deleteProductUseCase,
-        UpdateProductUseCase updateProductUseCase) : ControllerBase
+        UpdateProductUseCase updateProductUseCase,
+        GetProductCategoryUseCase getProductCategoryUseCase) : ControllerBase
     {
         private readonly CreateProductUseCase CreateProductUseCase = createProductUseCase;
         private readonly GetProductsUseCase GetProductsUseCase = getProductsUseCase;
         private readonly GetProductUseCase GetProductUseCase = getProductUseCase;
         private readonly DeleteProductUseCase DeleteProductUseCase = deleteProductUseCase;
         private readonly UpdateProductUseCase UpdateProductUseCase = updateProductUseCase;
+        private readonly GetProductCategoryUseCase GetProductCategoryUseCase = getProductCategoryUseCase;
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<ProductResponse>>> Create(CreateProductRequest request)
@@ -99,14 +101,15 @@ namespace Store.API.Controllers
         [MapToApiVersion("2.0")]
         public async Task<ActionResult<ApiResponse<CategoryResponse>>> GetProductCategory([FromRoute] Guid id)
         {
-            ProductResponse? response = await GetProductUseCase.Execute(id);
-
-            if (response == null)
+            try
             {
-                return NotFound(ApiResponse<object>.Error(404, $"No product with the id {id} found"));
+                CategoryResponse response = await GetProductCategoryUseCase.Execute(id);
+                return Ok(ApiResponse<CategoryResponse>.Ok(200, response, "Category retrieved"));
             }
-
-            return Ok(ApiResponse<CategoryResponse>.Ok(200, response.Category, "Product retrieved"));
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
         }
     }
 }

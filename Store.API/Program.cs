@@ -49,6 +49,7 @@ builder.Services.AddScoped<GetProductsUseCase>();
 builder.Services.AddScoped<GetProductUseCase>();
 builder.Services.AddScoped<DeleteProductUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();
+builder.Services.AddScoped<GetProductCategoryUseCase>();
 
 builder.Services.AddScoped<CreateCategoryUseCase>();
 builder.Services.AddScoped<GetCategoriesUseCase>();
