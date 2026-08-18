@@ -118,6 +118,7 @@ namespace Store.API.Controllers
         }
 
         [HttpGet("{categoryId:Guid}/children")]
+        [MapToApiVersion("2.0")]
         public async Task<ActionResult<ApiResponse<PagedResult<CategoryResponse>>>> GetCategoryChildren(
             [FromRoute] Guid categoryId,
             [FromQuery] int pageNum,
