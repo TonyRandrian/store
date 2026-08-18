@@ -73,26 +73,14 @@ namespace Store.Infrastructure.Repositories
                 .AnyAsync(s => s.Products.Any(p => p.Id == id));
         }
 
-        public async Task<PagedResult<Product>> GetCategoryProducts(Guid categoryId, int pageNumber, int pageSize)
+        public async Task<Category?> GetProductCategory(Guid productId)
         {
-            IQueryable<Product> query = Context.Products.Where(p => p.Category.Id == categoryId);
+            Category? category = await Context.Products
+                .Where(p => p.Id == productId)
+                .Select(p => p.Category)
+                .FirstOrDefaultAsync();
 
-            int totalRecords = await query.CountAsync();
-            List<Product> products = await query
-                .Include(p => p.Category)
-                .AsNoTracking()
-                .OrderBy(p => p.Id)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
-
-            return new PagedResult<Product>()
-            {
-                PageNumber = pageNumber,
-                PageSize = pageSize,
-                Data = products,
-                TotalRecords = totalRecords
-            };
+            return category;
         }
     }
 }

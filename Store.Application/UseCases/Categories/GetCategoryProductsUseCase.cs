@@ -5,14 +5,14 @@ using Store.Domain.Entities;
 
 namespace Store.Application.UseCases.Categories
 {
-    public class GetCategoryProductsUseCase(IProductRepository productRepository)
+    public class GetCategoryProductsUseCase(ICategoryRepository categoryRepository)
     {
-        private readonly IProductRepository ProductRepository = productRepository;
+        private readonly ICategoryRepository CategoryRepository = categoryRepository;
 
 
         public async Task<PagedResult<ProductResponse>> Execute(Guid id, int pageNum, int pageSize)
         {
-            PagedResult<Product> products = await ProductRepository.GetCategoryProducts(
+            PagedResult<Product> products = await CategoryRepository.GetCategoryProducts(
                 id, pageNum, pageSize);
 
             PagedResult<ProductResponse> response = new()
