@@ -10,5 +10,6 @@ namespace Store.Application.Interfaces
         public Task<Supplier> AddAsync(Supplier supplier);
         public Task<Supplier> UpdateAsync(Supplier supplier);
         public Task DeleteAsync(Guid id);
+        public Task<PagedResult<Product>> GetSupplierProducts(Guid supplierId, int pageNum, int pageSize);
     }
 }
