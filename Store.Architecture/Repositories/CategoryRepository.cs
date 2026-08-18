@@ -80,5 +80,53 @@ namespace Store.Infrastructure.Repositories
         {
             return await Context.Categories.AnyAsync(c => c.Id == id);
         }
+
+        public async Task<PagedResult<Product>> GetCategoryProducts(Guid categoryId, int pageNumber, int pageSize)
+        {
+            IQueryable<Product> query = Context.Products.Where(p => p.Category.Id == categoryId);
+
+            int totalRecords = await query.CountAsync();
+            List<Product> products = await query
+                .Include(p => p.Category)
+                .AsNoTracking()
+                .OrderBy(p => p.Id)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Product>()
+            {
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Data = products,
+                TotalRecords = totalRecords
+            };
+        }
+
+        public async Task<PagedResult<Category>?> GetCategoryChildren(Guid categoryId, int pageNum, int pageSize)
+        {
+            IQueryable<Category> query = Context.Categories
+                .Where(c => c.Id == categoryId)
+                .SelectMany(c => c.Children)
+                .Include(c => c.Parent)
+                .Include(c => c.Products);
+
+            int totalRecords = await query.CountAsync();
+            List<Category>? categories = await query
+                .OrderBy(c => c.Id)
+                .Skip((pageNum - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return categories == null
+                ? null
+                : new PagedResult<Category>()
+                {
+                    PageNumber = pageNum,
+                    PageSize = pageSize,
+                    Data = categories,
+                    TotalRecords = totalRecords
+                };
+        }
     }
 }

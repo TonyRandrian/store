@@ -1,25 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Categories;
+using Store.Application.DTOs.Products;
 using Store.Application.UseCases.Categories;
 
 namespace Store.API.Controllers
 {
     [ApiController]
-    [Route("api/categories")]
+    [Route("api/v{version:apiVersion}/categories")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class CategoriesController(
         CreateCategoryUseCase createCategoryUseCase,
         GetCategoriesUseCase getCategoriesUseCase,
         GetCategoryUseCase getCategoryUseCase,
         DeleteCategoryUseCase deleteCategoryUseCase,
-        UpdateCategoryUseCase updateCategoryUseCase) : ControllerBase
+        UpdateCategoryUseCase updateCategoryUseCase,
+        GetCategoryProductsUseCase getCategoryProductsUseCase,
+        GetCategoryChildrenUseCase getCategoryChildrenUseCase) : ControllerBase
     {
         private readonly CreateCategoryUseCase CreateCategoryUseCase = createCategoryUseCase;
         private readonly GetCategoriesUseCase GetCategoriesUseCase = getCategoriesUseCase;
         private readonly GetCategoryUseCase GetCategoryUseCase = getCategoryUseCase;
         private readonly DeleteCategoryUseCase DeleteCategoryUseCase = deleteCategoryUseCase;
         private readonly UpdateCategoryUseCase UpdateCategoryUseCase = updateCategoryUseCase;
+        private readonly GetCategoryProductsUseCase GetCategoryProductsUseCase = getCategoryProductsUseCase;
+        private readonly GetCategoryChildrenUseCase GetCategoryChildrenUseCase = getCategoryChildrenUseCase;
 
 
         [HttpPost]
@@ -94,6 +103,35 @@ namespace Store.API.Controllers
             catch (InvalidOperationException ioe)
             {
                 return BadRequest(ApiResponse<CategoryResponse>.Error(400, ioe.Message));
+            }
+        }
+
+        [HttpGet("{productId:Guid}/products")]
+        [MapToApiVersion("2.0")]
+        public async Task<ActionResult<ApiResponse<PagedResult<ProductResponse>>>> GetProducts(
+            [FromRoute] Guid productId,
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
+        {
+            PagedResult<ProductResponse> responses = await GetCategoryProductsUseCase.Execute(productId, pageNum, pageSize);
+            return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, responses, "Products retrieved"));
+        }
+
+        [HttpGet("{categoryId:Guid}/children")]
+        [MapToApiVersion("2.0")]
+        public async Task<ActionResult<ApiResponse<PagedResult<CategoryResponse>>>> GetCategoryChildren(
+            [FromRoute] Guid categoryId,
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
+        {
+            try
+            {
+                PagedResult<CategoryResponse> responses = await GetCategoryChildrenUseCase.Execute(categoryId, pageNum, pageSize);
+                return Ok(ApiResponse<PagedResult<CategoryResponse>>.Ok(200, responses, "Category retrieved"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
     }

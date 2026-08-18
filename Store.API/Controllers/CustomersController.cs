@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Store.API.Commons;
 using Store.Application.Commons;
@@ -9,6 +10,8 @@ namespace Store.API.Controllers
 {
     [ApiController]
     [Route("api/customers")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class CustomersController(
         GetCustomerUseCase getCustomerUseCase,
         GetCustomersUseCase getCustomersUseCase,

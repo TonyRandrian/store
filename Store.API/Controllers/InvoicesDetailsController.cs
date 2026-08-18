@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
+using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.InvoicesDetails;
 using Store.Application.UseCases.InvoicesDetails;
-using Store.Domain.Entities;
 
 namespace Store.API.Controllers
 {
     [ApiController]
     [Route("api/invoices-details")]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
     public class InvoicesDetailsController(
         CreateInvoiceDetailUseCase createInvoiceDetailUseCase,
         GetInvoiceDetailUseCase getInvoiceDetailUseCase,
