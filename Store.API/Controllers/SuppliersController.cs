@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
+using Store.Application.DTOs.Products;
 using Store.Application.DTOs.Suppliers;
 using Store.Application.UseCases.Suppliers;
 
@@ -16,13 +17,15 @@ namespace Store.API.Controllers
         CreateSupplierUseCase createSupplierUseCase,
         GetSuppliersUseCase getSuppliersUseCase,
         DeleteSupplierUseCase deleteSupplierUseCase,
-        UpdateSupplierUseCase updateSupplierUseCase) : ControllerBase
+        UpdateSupplierUseCase updateSupplierUseCase,
+        GetSupplierProductsUseCase getSupplierProductsUseCase) : ControllerBase
     {
         private readonly GetSupplierUseCase GetSupplierUseCase = getSupplierUseCase;
         private readonly CreateSupplierUseCase CreateSupplierUseCase = createSupplierUseCase;
         private readonly GetSuppliersUseCase GetSuppliersUseCase = getSuppliersUseCase;
         private readonly DeleteSupplierUseCase DeleteSupplierUseCase = deleteSupplierUseCase;
         private readonly UpdateSupplierUseCase UpdateSupplierUseCase = updateSupplierUseCase;
+        private readonly GetSupplierProductsUseCase GetSupplierProductsUseCase = getSupplierProductsUseCase;
 
 
         [HttpPost]
@@ -95,6 +98,16 @@ namespace Store.API.Controllers
             {
                 return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
+        }
+
+        [HttpGet("{supplierId:Guid}/products")]
+        public async Task<ActionResult<ApiResponse<PagedResult<ProductResponse>>>> GetSupplierProducts(
+            [FromRoute] Guid supplierId,
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
+        {
+            PagedResult<ProductResponse> response = await GetSupplierProductsUseCase.Execute(supplierId, pageNum, pageSize);
+            return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, response, "Products retrieved"));
         }
     }
 }
