@@ -1,6 +1,7 @@
-﻿namespace Store.Application.Features.Categories.Commands.CreateCategory
+﻿using MediatR;
+using Store.Application.DTOs.Categories;
+
+namespace Store.Application.Features.Categories.Commands.CreateCategory
 {
-    public class CreateCategoryCommand
-    {
-    }
+    public record CreateCategoryCommand(string Name, Guid? ParentCategoryId) : IRequest<CategoryResponse>;
 }

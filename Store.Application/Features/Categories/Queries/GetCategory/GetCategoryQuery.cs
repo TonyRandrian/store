@@ -1,6 +1,7 @@
-﻿namespace Store.Application.Features.Categories.Queries.GetCategory
+﻿using MediatR;
+using Store.Application.DTOs.Categories;
+
+namespace Store.Application.Features.Categories.Queries.GetCategory
 {
-    public class GetCategoryQuery
-    {
-    }
+    public record GetCategoryQuery(Guid Id) : IRequest<CategoryResponse?>;
 }

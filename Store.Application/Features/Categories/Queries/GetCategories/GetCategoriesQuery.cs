@@ -1,6 +1,8 @@
-﻿namespace Store.Application.Features.Categories.Queries.GetCategories
+﻿using MediatR;
+using Store.Application.Commons;
+using Store.Application.DTOs.Categories;
+
+namespace Store.Application.Features.Categories.Queries.GetCategories
 {
-    public class GetCategoriesQuery
-    {
-    }
+    public record GetCategoriesQuery(int PageNumber, int PageSize) : IRequest<PagedResult<CategoryResponse>>;
 }
