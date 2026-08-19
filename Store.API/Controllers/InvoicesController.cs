@@ -1,8 +1,14 @@
 ﻿using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Invoices;
+using Store.Application.Features.Invoices.Commands.CreateInvoice;
+using Store.Application.Features.Invoices.Commands.DeleteInvoice;
+using Store.Application.Features.Invoices.Commands.UpdateInvoice;
+using Store.Application.Features.Invoices.Queries.GetInvoice;
+using Store.Application.Features.Invoices.Queries.GetInvoices;
 using Store.Application.UseCases.Invoices;
 
 namespace Store.API.Controllers
@@ -12,17 +18,9 @@ namespace Store.API.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     public class InvoicesController(
-        GetInvoiceUseCase getInvoiceUseCase,
-        CreateInvoiceUseCase createInvoiceUseCase,
-        GetInvoicesUseCase getInvoicesUseCase,
-        DeleteInvoiceUseCase deleteInvoiceUseCase,
-        UpdateInvoiceUseCase updateInvoiceUseCase) : ControllerBase
+        IMediator mediator) : ControllerBase
     {
-        private readonly GetInvoiceUseCase GetInvoiceUseCase = getInvoiceUseCase;
-        private readonly CreateInvoiceUseCase CreateInvoiceUseCase = createInvoiceUseCase;
-        private readonly GetInvoicesUseCase GetInvoicesUseCase = getInvoicesUseCase;
-        private readonly DeleteInvoiceUseCase DeleteInvoiceUseCase = deleteInvoiceUseCase;
-        private readonly UpdateInvoiceUseCase UpdateInvoiceUseCase = updateInvoiceUseCase;
+        private readonly IMediator _mediator = mediator;
 
 
         [HttpPost]
@@ -30,7 +28,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                InvoiceResponse response = await CreateInvoiceUseCase.Execute(request);
+                InvoiceResponse response = await _mediator.Send(new CreateInvoiceCommand(
+                    request.Reference, request.Total, request.CustomerId));
                 return Ok(ApiResponse<InvoiceResponse>.Ok(201, response, "Invoice created"));
             }
             catch (KeyNotFoundException knf)
@@ -44,7 +43,7 @@ namespace Store.API.Controllers
         {
             try
             {
-                InvoiceResponse response = await GetInvoiceUseCase.Execute(id);
+                InvoiceResponse response = await _mediator.Send(new GetInvoiceQuery(id));
                 return Ok(ApiResponse<InvoiceResponse>.Ok(200, response, "Invoice retrieved"));
             }
             catch (KeyNotFoundException knf)
@@ -58,16 +57,16 @@ namespace Store.API.Controllers
             [FromQuery] int pageNum,
             [FromQuery] int pageSize)
         {
-            PagedResult<InvoiceResponse> responses = await GetInvoicesUseCase.Execute(pageNum, pageSize);
+            PagedResult<InvoiceResponse> responses = await _mediator.Send(new GetInvoicesQuery(pageNum, pageSize));
             return Ok(ApiResponse<PagedResult<InvoiceResponse>>.Ok(200, responses, "Invoices retrieved"));
         }
-        
+
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
             try
             {
-                await DeleteInvoiceUseCase.Execute(id);
+                await _mediator.Send(new DeleteInvoiceCommand(id));
                 return Ok(ApiResponse<object>.Ok(204, null, "Invoice deleted"));
             }
             catch (KeyNotFoundException knf)
@@ -83,7 +82,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                InvoiceResponse response = await UpdateInvoiceUseCase.Execute(id, request);
+                InvoiceResponse response = await _mediator.Send(new UpdateInvoiceCommand(
+                    id, request.Reference, request.Total, request.CustomerId));
                 return Ok(ApiResponse<InvoiceResponse>.Ok(201, response, "Invoice udpdated"));
             }
             catch (KeyNotFoundException knf)
