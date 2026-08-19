@@ -1,6 +1,8 @@
-﻿namespace Store.Application.Features.Categories.Commands.UpdateCategory
+﻿using MediatR;
+using Store.Application.DTOs.Categories;
+
+namespace Store.Application.Features.Categories.Commands.UpdateCategory
 {
-    public class UpdateCategoryCommand
-    {
-    }
+    public record UpdateCategoryCommand(Guid Id, string Name, Guid? ParentCategoryId)
+        : IRequest<CategoryResponse>;
 }
