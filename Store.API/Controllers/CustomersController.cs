@@ -1,9 +1,15 @@
 ﻿using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Customers;
+using Store.Application.Features.Categories.Commands.UpdateCategory;
+using Store.Application.Features.Customers.Commands.CreateCustomer;
+using Store.Application.Features.Customers.Commands.DeleteCustomer;
+using Store.Application.Features.Customers.Commands.UpdateCustomer;
+using Store.Application.Features.Customers.Queries.GetCustomer;
+using Store.Application.Features.Customers.Queries.GetCustomers;
 using Store.Application.UseCases.Customers;
 
 namespace Store.API.Controllers
@@ -13,37 +19,30 @@ namespace Store.API.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     public class CustomersController(
-        GetCustomerUseCase getCustomerUseCase,
-        GetCustomersUseCase getCustomersUseCase,
-        CreateCustomerUseCase createCustomerUseCase,
-        DeleteCustomerUseCase deleteCustomerUseCase,
-        UpdateCustomerUseCase updateCustomerUseCase) : ControllerBase
+        IMediator mediator) : ControllerBase
     {
-        private readonly GetCustomerUseCase GetCustomerUseCase = getCustomerUseCase;
-        private readonly GetCustomersUseCase GetCustomersUseCase = getCustomersUseCase;
-        private readonly CreateCustomerUseCase CreateCustomerUseCase = createCustomerUseCase;
-        private readonly DeleteCustomerUseCase DeleteCustomerUseCase = deleteCustomerUseCase;
-        private readonly UpdateCustomerUseCase UpdateCustomerUseCase = updateCustomerUseCase;
+        private readonly IMediator _mediator = mediator;
 
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<CustomerResponse>>> Create(CreateCustomerRequest request)
         {
-            CustomerResponse response = await CreateCustomerUseCase.Execute(request);
+            CustomerResponse response = await _mediator.Send(new CreateCustomerCommand(request.Name));
             return Ok(ApiResponse<CustomerResponse>.Ok(201, response, "Customer Created"));
         }
 
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<CustomerResponse>>> GetCustomer([FromRoute] Guid id)
         {
-            CustomerResponse? response = await GetCustomerUseCase.Execute(id);
-
-            if (response != null)
+            try
             {
-                return Ok(ApiResponse<CustomerResponse>.Ok(200, response, "Data retrieved"));
+                CustomerResponse? response = await _mediator.Send(new GetCustomerQuery(id));
+                return Ok(ApiResponse<CustomerResponse>.Ok(200, response, "Customer retrieved"));
             }
-
-            return NotFound(ApiResponse<CustomerResponse>.Error(404, "Customer not found"));
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<CustomerResponse>.Error(404, knf.Message));
+            }
         }
 
         [HttpGet]
@@ -51,8 +50,7 @@ namespace Store.API.Controllers
             [FromQuery] int pageNum,
             [FromQuery] int pageSize)
         {
-            PagedResult<CustomerResponse> responses = await GetCustomersUseCase.Execute(pageNum, pageSize);
-
+            PagedResult<CustomerResponse> responses = await _mediator.Send(new GetCustomersQuery(pageNum, pageSize));
             return Ok(ApiResponse<PagedResult<CustomerResponse>>.Ok(200, responses, "Customers retrieved"));
         }
 
@@ -61,7 +59,7 @@ namespace Store.API.Controllers
         {
             try
             {
-                await DeleteCustomerUseCase.Execute(id);
+                await _mediator.Send(new DeleteCustomerCommand(id));
                 return Ok(ApiResponse<object>.Ok(204, null, "Customer deleted"));
             }
             catch (KeyNotFoundException knf)
@@ -77,7 +75,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                CustomerResponse response = await UpdateCustomerUseCase.Execute(id, request);
+                CustomerResponse response = await _mediator.Send(new UpdateCustomerCommand(
+                    id, request.Name));
                 return Ok(ApiResponse<CustomerResponse>.Ok(201, response, "Customer Updated"));
             }
             catch (KeyNotFoundException knf)

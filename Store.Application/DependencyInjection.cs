@@ -13,11 +13,6 @@ namespace Store.Application
         public static IServiceCollection AddApplicationDI(this IServiceCollection services)
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
-            services.AddScoped<GetCustomerUseCase>();
-            services.AddScoped<GetCustomersUseCase>();
-            services.AddScoped<CreateCustomerUseCase>();
-            services.AddScoped<DeleteCustomerUseCase>();
-            services.AddScoped<UpdateCustomerUseCase>();
 
             services.AddScoped<CreateInvoiceUseCase>();
             services.AddScoped<GetInvoiceUseCase>();
