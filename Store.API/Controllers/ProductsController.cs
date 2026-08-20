@@ -11,7 +11,6 @@ using Store.Application.Features.Products.Commands.UpdateProduct;
 using Store.Application.Features.Products.Queries.GetProduct;
 using Store.Application.Features.Products.Queries.GetProductCategory;
 using Store.Application.Features.Products.Queries.GetProducts;
-using Store.Application.UseCases.Products;
 
 namespace Store.API.Controllers
 {

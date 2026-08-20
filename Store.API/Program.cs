@@ -1,16 +1,10 @@
-using Store.Infrastructure.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Store.Application.Interfaces;
-using Store.Infrastructure.Repositories;
-using Store.Application.UseCases.Products;
-using Store.Application.UseCases.Categories;
-using Store.Application.UseCases.Customers;
-using Store.Application.UseCases.Invoices;
-using Store.Application.UseCases.Suppliers;
-using Store.Application.UseCases.InvoicesDetails;
 using Asp.Versioning;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Store.Application;
+using Store.Application.Interfaces;
+using Store.Infrastructure.Persistence;
+using Store.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 

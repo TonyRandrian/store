@@ -4,13 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Customers;
-using Store.Application.Features.Categories.Commands.UpdateCategory;
 using Store.Application.Features.Customers.Commands.CreateCustomer;
 using Store.Application.Features.Customers.Commands.DeleteCustomer;
 using Store.Application.Features.Customers.Commands.UpdateCustomer;
 using Store.Application.Features.Customers.Queries.GetCustomer;
 using Store.Application.Features.Customers.Queries.GetCustomers;
-using Store.Application.UseCases.Customers;
 
 namespace Store.API.Controllers
 {

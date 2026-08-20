@@ -2,7 +2,6 @@
 using Store.Application.Commons;
 using Store.Application.DTOs.Customers;
 using Store.Application.Interfaces;
-using Store.Application.UseCases.Customers;
 using Store.Domain.Entities;
 
 namespace Store.Application.Features.Customers.Queries.GetCustomers
