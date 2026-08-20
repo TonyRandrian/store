@@ -1,0 +1,6 @@
+﻿using MediatR;
+
+namespace Store.Application.Features.Products.Commands.DeleteProduct
+{
+    public record DeleteProductCommand(Guid Id) : IRequest;
+}
