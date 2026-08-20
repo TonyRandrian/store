@@ -9,7 +9,6 @@ using Store.Application.Features.Invoices.Commands.DeleteInvoice;
 using Store.Application.Features.Invoices.Commands.UpdateInvoice;
 using Store.Application.Features.Invoices.Queries.GetInvoice;
 using Store.Application.Features.Invoices.Queries.GetInvoices;
-using Store.Application.UseCases.Invoices;
 
 namespace Store.API.Controllers
 {
