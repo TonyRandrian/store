@@ -14,13 +14,6 @@ namespace Store.Application
         {
             services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
 
-            services.AddScoped<GetSupplierUseCase>();
-            services.AddScoped<CreateSupplierUseCase>();
-            services.AddScoped<GetSuppliersUseCase>();
-            services.AddScoped<DeleteSupplierUseCase>();
-            services.AddScoped<UpdateSupplierUseCase>();
-            services.AddScoped<GetSupplierProductsUseCase>();
-
             services.AddScoped<GetInvoiceDetailUseCase>();
             services.AddScoped<CreateInvoiceDetailUseCase>();
             services.AddScoped<GetInvoicesDetailsUseCase>();
