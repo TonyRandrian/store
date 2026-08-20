@@ -1,9 +1,14 @@
 ﻿using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.InvoicesDetails;
-using Store.Application.UseCases.InvoicesDetails;
+using Store.Application.Features.InvoicesDetails.Commands.CreateInvoiceDetail;
+using Store.Application.Features.InvoicesDetails.Commands.DeleteInvoiceDetail;
+using Store.Application.Features.InvoicesDetails.Commands.UpdateInvoiceDetail;
+using Store.Application.Features.InvoicesDetails.Queries.GetInvoiceDetail;
+using Store.Application.Features.InvoicesDetails.Queries.GetInvoicesDetails;
 
 namespace Store.API.Controllers
 {
@@ -12,17 +17,9 @@ namespace Store.API.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     public class InvoicesDetailsController(
-        CreateInvoiceDetailUseCase createInvoiceDetailUseCase,
-        GetInvoiceDetailUseCase getInvoiceDetailUseCase,
-        GetInvoicesDetailsUseCase getInvoicesDetailsUseCase,
-        DeleteInvoiceDetailUseCase deleteInvoiceDetailUseCase,
-        UpdateInvoiceDetailUseCase updateInvoiceDetailUseCase) : ControllerBase
+        IMediator mediator) : ControllerBase
     {
-        private readonly CreateInvoiceDetailUseCase CreateInvoiceDetailUseCase = createInvoiceDetailUseCase;
-        private readonly GetInvoiceDetailUseCase GetInvoiceDetailUseCase = getInvoiceDetailUseCase;
-        private readonly GetInvoicesDetailsUseCase GetInvoicesDetailsUseCase = getInvoicesDetailsUseCase;
-        private readonly DeleteInvoiceDetailUseCase DeleteInvoiceDetailUseCase = deleteInvoiceDetailUseCase;
-        private readonly UpdateInvoiceDetailUseCase UpdateInvoiceDetailUseCase = updateInvoiceDetailUseCase;
+        private readonly IMediator _mediator = mediator;
 
 
         [HttpPost]
@@ -31,7 +28,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                InvoiceDetailResponse response = await CreateInvoiceDetailUseCase.Execute(request);
+                InvoiceDetailResponse response = await _mediator.Send(new CreateInvoiceDetailCommand(
+                    request.InvoiceId, request.ProductId, request.Quantity));
                 return Ok(ApiResponse<InvoiceDetailResponse>.Ok(201, response, "Created Successfully"));
             }
             catch (KeyNotFoundException knf)
@@ -45,7 +43,7 @@ namespace Store.API.Controllers
         {
             try
             {
-                await DeleteInvoiceDetailUseCase.Execute(id);
+                await _mediator.Send(new DeleteInvoiceDetailCommand(id));
                 return Ok(ApiResponse<object>.Ok(204, null, "Invoice detail deleted"));
             }
             catch (KeyNotFoundException knf)
@@ -59,7 +57,7 @@ namespace Store.API.Controllers
         {
             try
             {
-                InvoiceDetailResponse result = await GetInvoiceDetailUseCase.Execute(id);
+                InvoiceDetailResponse result = await _mediator.Send(new GetInvoiceDetailQuery(id));
                 return Ok(ApiResponse<InvoiceDetailResponse>.Ok(200, result, "Invoice detail retrieved"));
             }
             catch (KeyNotFoundException knf)
@@ -73,7 +71,8 @@ namespace Store.API.Controllers
             [FromQuery] int pageNum,
             [FromQuery] int pageSize)
         {
-            PagedResult<InvoiceDetailResponse> response = await GetInvoicesDetailsUseCase.Execute(pageNum, pageSize);
+            PagedResult<InvoiceDetailResponse> response = await _mediator.Send(new GetInvoicesDetailsQuery(
+                pageNum, pageSize));
             return Ok(ApiResponse<PagedResult<InvoiceDetailResponse>>.Ok(200, response, "Invoices details retrieved"));
         }
 
@@ -84,7 +83,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                InvoiceDetailResponse response = await UpdateInvoiceDetailUseCase.Execute(id, request);
+                InvoiceDetailResponse response = await _mediator.Send(new UpdateInvoiceDetailCommand(
+                    id, request.ProductId, request.Quantity));
                 return Ok(ApiResponse<InvoiceDetailResponse>.Ok(201, response, "Invoice detail updated"));
             }
             catch (KeyNotFoundException knf)

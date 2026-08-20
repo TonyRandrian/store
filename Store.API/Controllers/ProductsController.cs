@@ -1,9 +1,16 @@
 ﻿using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Categories;
 using Store.Application.DTOs.Products;
+using Store.Application.Features.Products.Commands.CreateProduct;
+using Store.Application.Features.Products.Commands.DeleteProduct;
+using Store.Application.Features.Products.Commands.UpdateProduct;
+using Store.Application.Features.Products.Queries.GetProduct;
+using Store.Application.Features.Products.Queries.GetProductCategory;
+using Store.Application.Features.Products.Queries.GetProducts;
 using Store.Application.UseCases.Products;
 
 namespace Store.API.Controllers
@@ -13,26 +20,18 @@ namespace Store.API.Controllers
     [ApiVersion("2.0")]
     [Route("api/v{version:apiVersion}/products")]
     public class ProductsController(
-        CreateProductUseCase createProductUseCase,
-        GetProductsUseCase getProductsUseCase,
-        GetProductUseCase getProductUseCase,
-        DeleteProductUseCase deleteProductUseCase,
-        UpdateProductUseCase updateProductUseCase,
-        GetProductCategoryUseCase getProductCategoryUseCase) : ControllerBase
+        IMediator mediator) : ControllerBase
     {
-        private readonly CreateProductUseCase CreateProductUseCase = createProductUseCase;
-        private readonly GetProductsUseCase GetProductsUseCase = getProductsUseCase;
-        private readonly GetProductUseCase GetProductUseCase = getProductUseCase;
-        private readonly DeleteProductUseCase DeleteProductUseCase = deleteProductUseCase;
-        private readonly UpdateProductUseCase UpdateProductUseCase = updateProductUseCase;
-        private readonly GetProductCategoryUseCase GetProductCategoryUseCase = getProductCategoryUseCase;
+        private readonly IMediator _mediator = mediator;
+
 
         [HttpPost]
         public async Task<ActionResult<ApiResponse<ProductResponse>>> Create(CreateProductRequest request)
         {
             try
             {
-                ProductResponse response = await CreateProductUseCase.Execute(request);
+                ProductResponse response = await _mediator.Send(new CreateProductCommand(
+                    request.Name, request.Price, request.CategoryId, request.SuppliersIds));
                 return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product created"));
             }
             catch (KeyNotFoundException knf)
@@ -46,7 +45,7 @@ namespace Store.API.Controllers
             [FromQuery] int pageNum,
             [FromQuery] int pageSize)
         {
-            PagedResult<ProductResponse> responses = await GetProductsUseCase.Execute(pageNum, pageSize);
+            PagedResult<ProductResponse> responses = await _mediator.Send(new GetProductsQuery(pageNum, pageSize));
 
             return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, responses, "Products retrieved"));
         }
@@ -54,14 +53,15 @@ namespace Store.API.Controllers
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<ProductResponse>>> GetProduct([FromRoute] Guid id)
         {
-            ProductResponse? response = await GetProductUseCase.Execute(id);
-
-            if (response != null)
+            try
             {
+                ProductResponse response = await _mediator.Send(new GetProductQuery(id));
                 return Ok(ApiResponse<ProductResponse>.Ok(200, response, "Product retrieved"));
             }
-
-            return NotFound(ApiResponse<object>.Error(404, $"No product with the id {id} found"));
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
         }
 
         [HttpDelete("{id:Guid}")]
@@ -69,7 +69,7 @@ namespace Store.API.Controllers
         {
             try
             {
-                await DeleteProductUseCase.Execute(id);
+                await _mediator.Send(new DeleteProductCommand(id));
                 return Ok(ApiResponse<object>.Ok(204, null, "Product deleted"));
             }
             catch (InvalidOperationException ioe)
@@ -88,7 +88,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                ProductResponse response = await UpdateProductUseCase.Excecute(id, request);
+                ProductResponse response = await _mediator.Send(new UpdateProductCommand(
+                    id, request.Name, request.Price, request.CategoryId, request.SuppliersIds));
                 return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product updated"));
             }
             catch (KeyNotFoundException knf)
@@ -103,7 +104,7 @@ namespace Store.API.Controllers
         {
             try
             {
-                CategoryResponse response = await GetProductCategoryUseCase.Execute(id);
+                CategoryResponse response = await _mediator.Send(new GetProductCategoryQuery(id));
                 return Ok(ApiResponse<CategoryResponse>.Ok(200, response, "Category retrieved"));
             }
             catch (KeyNotFoundException knf)

@@ -1,10 +1,16 @@
 ﻿using Asp.Versioning;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Products;
 using Store.Application.DTOs.Suppliers;
-using Store.Application.UseCases.Suppliers;
+using Store.Application.Features.Suppliers.Commands.CreateSupplier;
+using Store.Application.Features.Suppliers.Commands.DeleteSupplier;
+using Store.Application.Features.Suppliers.Commands.UpdateSupplier;
+using Store.Application.Features.Suppliers.Queries.GetSupplier;
+using Store.Application.Features.Suppliers.Queries.GetSupplierProducts;
+using Store.Application.Features.Suppliers.Queries.GetSuppliers;
 
 namespace Store.API.Controllers
 {
@@ -13,19 +19,9 @@ namespace Store.API.Controllers
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
     public class SuppliersController(
-        GetSupplierUseCase getSupplierUseCase,
-        CreateSupplierUseCase createSupplierUseCase,
-        GetSuppliersUseCase getSuppliersUseCase,
-        DeleteSupplierUseCase deleteSupplierUseCase,
-        UpdateSupplierUseCase updateSupplierUseCase,
-        GetSupplierProductsUseCase getSupplierProductsUseCase) : ControllerBase
+        IMediator mediator) : ControllerBase
     {
-        private readonly GetSupplierUseCase GetSupplierUseCase = getSupplierUseCase;
-        private readonly CreateSupplierUseCase CreateSupplierUseCase = createSupplierUseCase;
-        private readonly GetSuppliersUseCase GetSuppliersUseCase = getSuppliersUseCase;
-        private readonly DeleteSupplierUseCase DeleteSupplierUseCase = deleteSupplierUseCase;
-        private readonly UpdateSupplierUseCase UpdateSupplierUseCase = updateSupplierUseCase;
-        private readonly GetSupplierProductsUseCase GetSupplierProductsUseCase = getSupplierProductsUseCase;
+        private readonly IMediator _mediator = mediator;
 
 
         [HttpPost]
@@ -33,7 +29,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                SupplierResponse response = await CreateSupplierUseCase.Execute(request);
+                SupplierResponse response = await _mediator.Send(new CreateSupplierCommand(
+                    request.Name, request.ProductsIds));
 
                 return Ok(ApiResponse<SupplierResponse>.Ok(201, response, "Supplier created"));
             }
@@ -48,7 +45,7 @@ namespace Store.API.Controllers
         {
             try
             {
-                SupplierResponse response = await GetSupplierUseCase.Execute(id);
+                SupplierResponse response = await _mediator.Send(new GetSupplierQuery(id));
                 return Ok(ApiResponse<SupplierResponse>.Ok(200, response, "Supplier retrieved"));
             }
             catch (KeyNotFoundException knf)
@@ -62,7 +59,8 @@ namespace Store.API.Controllers
             [FromQuery] int pageNum,
             [FromQuery] int pageSize)
         {
-            PagedResult<SupplierResponse> responses = await GetSuppliersUseCase.Execute(pageNum, pageSize);
+            PagedResult<SupplierResponse> responses = await _mediator.Send(new GetSuppliersQuery(
+                pageNum, pageSize));
             return Ok(ApiResponse<PagedResult<SupplierResponse>>.Ok(200, responses, "Suppliers retrieved"));
         }
 
@@ -71,7 +69,7 @@ namespace Store.API.Controllers
         {
             try
             {
-                await DeleteSupplierUseCase.Execute(id);
+                await _mediator.Send(new DeleteSupplierCommand(id));
                 return Ok(ApiResponse<object>.Ok(204, null, "Supplier deleted"));
             }
             catch (KeyNotFoundException knf)
@@ -91,7 +89,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                SupplierResponse response = await UpdateSupplierUseCase.Execute(id, request);
+                SupplierResponse response = await _mediator.Send(new UpdateSupplierCommand(
+                    id, request.Name, request.ProductsIds));
                 return Ok(ApiResponse<SupplierResponse>.Ok(201, response, "Supplier updated"));
             }
             catch (KeyNotFoundException knf)
@@ -106,7 +105,8 @@ namespace Store.API.Controllers
             [FromQuery] int pageNum,
             [FromQuery] int pageSize)
         {
-            PagedResult<ProductResponse> response = await GetSupplierProductsUseCase.Execute(supplierId, pageNum, pageSize);
+            PagedResult<ProductResponse> response = await _mediator.Send(new GetSupplierProductsQuery(
+                supplierId, pageNum, pageSize));
             return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, response, "Products retrieved"));
         }
     }

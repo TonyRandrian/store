@@ -10,6 +10,7 @@ using Store.Application.UseCases.Suppliers;
 using Store.Application.UseCases.InvoicesDetails;
 using Asp.Versioning;
 using Microsoft.OpenApi;
+using Store.Application;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,46 +44,7 @@ builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
 builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailRepository>();
 
-// UseCases
-builder.Services.AddScoped<CreateProductUseCase>();
-builder.Services.AddScoped<GetProductsUseCase>();
-builder.Services.AddScoped<GetProductUseCase>();
-builder.Services.AddScoped<DeleteProductUseCase>();
-builder.Services.AddScoped<UpdateProductUseCase>();
-builder.Services.AddScoped<GetProductCategoryUseCase>();
-
-builder.Services.AddScoped<CreateCategoryUseCase>();
-builder.Services.AddScoped<GetCategoriesUseCase>();
-builder.Services.AddScoped<GetCategoryUseCase>();
-builder.Services.AddScoped<DeleteCategoryUseCase>();
-builder.Services.AddScoped<UpdateCategoryUseCase>();
-builder.Services.AddScoped<GetCategoryProductsUseCase>();
-builder.Services.AddScoped<GetCategoryChildrenUseCase>();
-
-builder.Services.AddScoped<GetCustomerUseCase>();
-builder.Services.AddScoped<GetCustomersUseCase>();
-builder.Services.AddScoped<CreateCustomerUseCase>();
-builder.Services.AddScoped<DeleteCustomerUseCase>();
-builder.Services.AddScoped<UpdateCustomerUseCase>();
-
-builder.Services.AddScoped<CreateInvoiceUseCase>();
-builder.Services.AddScoped<GetInvoiceUseCase>();
-builder.Services.AddScoped<GetInvoicesUseCase>();
-builder.Services.AddScoped<DeleteInvoiceUseCase>();
-builder.Services.AddScoped<UpdateInvoiceUseCase>();
-
-builder.Services.AddScoped<GetSupplierUseCase>();
-builder.Services.AddScoped<CreateSupplierUseCase>();
-builder.Services.AddScoped<GetSuppliersUseCase>();
-builder.Services.AddScoped<DeleteSupplierUseCase>();
-builder.Services.AddScoped<UpdateSupplierUseCase>();
-builder.Services.AddScoped<GetSupplierProductsUseCase>();
-
-builder.Services.AddScoped<GetInvoiceDetailUseCase>();
-builder.Services.AddScoped<CreateInvoiceDetailUseCase>();
-builder.Services.AddScoped<GetInvoicesDetailsUseCase>();
-builder.Services.AddScoped<DeleteInvoiceDetailUseCase>();
-builder.Services.AddScoped<UpdateInvoiceDetailUseCase>();
+builder.Services.AddApplicationDI();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();
