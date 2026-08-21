@@ -123,8 +123,8 @@ namespace Store.API.Controllers
         {
             try
             {
-                List<FileUpload> uploads = [.. files.Select(file =>
-                new FileUpload(
+                List<CreateProductFile> uploads = [.. files.Select(file =>
+                new CreateProductFile(
                     file.OpenReadStream(),
                     file.FileName,
                     file.ContentType,

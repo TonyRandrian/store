@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Store.Application;
 using Store.Application.Interfaces;
+using Store.Application.Settings;
 using Store.Infrastructure.Persistence;
 using Store.Infrastructure.Repositories;
 using Store.Infrastructure.Services;
@@ -42,6 +43,9 @@ builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailRepository>()
 builder.Services.AddApplicationDI();
 
 builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
+
+builder.Services.Configure<FileStorageSettings>(
+    builder.Configuration.GetSection("FileStorage"));
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

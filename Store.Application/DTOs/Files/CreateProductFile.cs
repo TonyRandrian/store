@@ -1,6 +1,6 @@
 ﻿namespace Store.Application.DTOs.Files
 {
-    public record FileUpload
+    public record CreateProductFile
     (
         Stream Content,
         string FileName,

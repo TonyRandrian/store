@@ -4,6 +4,6 @@ using Store.Application.DTOs.Products;
 
 namespace Store.Application.Features.Products.Commands.AddProductImage
 {
-    public record AddProductImageCommand(Guid Id, List<FileUpload> Uploads)
+    public record AddProductImageCommand(Guid Id, List<CreateProductFile> Uploads)
         : IRequest<ProductResponse>;
 }
