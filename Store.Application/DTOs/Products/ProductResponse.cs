@@ -39,11 +39,17 @@ namespace Store.Application.DTOs.Products
             Name = product.Name;
             Price = product.Price;
             Category = new CategoryResponse(product.Category!);
-            SuppliersIds = [];
 
+            SuppliersIds = [];
             foreach (Supplier supplier in product.Suppliers)
             {
                 SuppliersIds.Add(supplier.Id);
+            }
+
+            Images = [];
+            foreach (Image image in product.Images)
+            {
+                Images.Add(new ImageResponse(image));
             }
         }
     }
