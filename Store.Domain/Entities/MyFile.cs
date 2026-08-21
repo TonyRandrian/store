@@ -1,6 +1,6 @@
 ﻿namespace Store.Domain.Entities
 {
-    public abstract class File
+    public abstract class MyFile
     {
         private string _fileName;
         private string _originalFileName;
@@ -8,7 +8,7 @@
         private string _extension;
         private Product _product;
 
-        public File(string fileName, string originalFileName, string path, string extension, long size)
+        public MyFile(string fileName, string originalFileName, string path, string extension, long size)
         {
             FileName = fileName;
             OriginalFileName = originalFileName;
@@ -17,7 +17,7 @@
             Size = size;
         }
 
-        public File()
+        public MyFile()
         { }
 
 

@@ -1,6 +1,6 @@
 ﻿namespace Store.Domain.Entities
 {
-    public class Image : File
+    public class Image : MyFile
     {
         private readonly string[] AllowedExtension = { "png", "jpg", "jpeg", "webp" };
 

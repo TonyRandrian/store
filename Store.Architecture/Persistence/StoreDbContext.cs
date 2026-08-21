@@ -11,5 +11,20 @@ namespace Store.Infrastructure.Persistence
         public DbSet<Product> Products => Set<Product>();
         public DbSet<Supplier> Suppliers => Set<Supplier>();
         public DbSet<InvoiceDetail> InvoiceDetails => Set<InvoiceDetail>();
+        public DbSet<MyFile> Files => Set<MyFile>();
+        public DbSet<Document> Documents => Set<Document>();
+        public DbSet<Image> Images => Set<Image>();
+
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // 1-to-1 relationship: Product <-> Document
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Document)
+                .WithOne(d => d.Product)
+                .HasForeignKey<Document>(d => d.ProductId);
+        }
     }
 }
