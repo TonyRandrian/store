@@ -2,15 +2,24 @@
 {
     public class Product
     {
-        private string name = null!;
+        private string _name = null!;
+        private Document? _document;
+        private List<Image> _images;
 
 
-        public Product(string name, decimal price, Category? category, List<Supplier>? suppliers = null)
+        public Product(string name,
+            decimal price,
+            Category? category,
+            List<Supplier>? suppliers = null,
+            Document? document = null,
+            List<Image>? images = null)
         {
             Name = name;
             Category = category;
             Suppliers = suppliers ?? [];
             Price = price;
+            Document = document;
+            Images = images ?? [];
         }
 
         public Product()
@@ -27,12 +36,12 @@
 
         public string Name
         {
-            get => name;
+            get => _name;
 
             set
             {
                 ArgumentNullException.ThrowIfNullOrEmpty(value, "Cannot create a product with a null or empty name");
-                name = value;
+                _name = value;
             }
         }
 
@@ -59,6 +68,29 @@
             get;
 
             set;
+        }
+
+        public Document? Document
+        {
+            get => _document;
+            set
+            {
+                _document = value;
+            }
+        }
+
+        public List<Image> Images
+        {
+            get => _images;
+            set
+            {
+                _images = value;
+            }
+        }
+
+        public void AddImage(Image image)
+        {
+            Images.Add(image);
         }
     }
 }
