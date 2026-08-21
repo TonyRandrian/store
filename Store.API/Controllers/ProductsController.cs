@@ -1,10 +1,14 @@
 ﻿using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Categories;
+using Store.Application.DTOs.Files;
+using Store.Application.DTOs.Files.Images;
 using Store.Application.DTOs.Products;
+using Store.Application.Features.Products.Commands.AddProductImage;
 using Store.Application.Features.Products.Commands.CreateProduct;
 using Store.Application.Features.Products.Commands.DeleteProduct;
 using Store.Application.Features.Products.Commands.UpdateProduct;
@@ -109,6 +113,35 @@ namespace Store.API.Controllers
             catch (KeyNotFoundException knf)
             {
                 return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+        }
+
+        [HttpPost("{productId:Guid}/images")]
+        public async Task<ActionResult<ApiResponse<ImageResponse>>> AddImage(
+            Guid productId,
+            [FromForm] List<IFormFile> files)
+        {
+            try
+            {
+                List<FileUpload> uploads = [.. files.Select(file =>
+                new FileUpload(
+                    file.OpenReadStream(),
+                    file.FileName,
+                    file.ContentType,
+                    file.Length
+                    )
+                )];
+
+                ProductResponse response = await _mediator.Send(new AddProductImageCommand(productId, uploads));
+                return Ok(ApiResponse<ProductResponse>.Ok(200, response, "Images added"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+            catch (ArgumentException ae)
+            {
+                return BadRequest(ApiResponse<object>.Error(400, ae.Message));
             }
         }
     }

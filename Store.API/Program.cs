@@ -5,6 +5,7 @@ using Store.Application;
 using Store.Application.Interfaces;
 using Store.Infrastructure.Persistence;
 using Store.Infrastructure.Repositories;
+using Store.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -39,6 +40,8 @@ builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailRepository>();
 
 builder.Services.AddApplicationDI();
+
+builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
 // Swagger
 builder.Services.AddEndpointsApiExplorer();

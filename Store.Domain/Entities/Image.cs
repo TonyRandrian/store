@@ -1,13 +1,26 @@
-﻿namespace Store.Domain.Entities
+﻿using System.Drawing;
+
+namespace Store.Domain.Entities
 {
     public class Image : MyFile
     {
-        private readonly string[] AllowedExtension = { "png", "jpg", "jpeg", "webp" };
 
-
-        public override bool IsValidExtension()
+        public Image(
+            string fileName,
+            string originalFileName,
+            string path,
+            string extension,
+            long size,
+            Product product) : base(fileName,
+                                    originalFileName,
+                                    path,
+                                    extension,
+                                    size,
+                                    product)
         {
-            return AllowedExtension.Contains(Extension);
+
         }
+
+        public Image() { }
     }
 }

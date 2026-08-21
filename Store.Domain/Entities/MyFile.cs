@@ -9,21 +9,24 @@
         private Product _product;
 
 
-        public MyFile(string fileName, string originalFileName, string path, string extension, long size)
+        public MyFile(
+            string fileName, 
+            string originalFileName, 
+            string path, 
+            string extension, 
+            long size,
+            Product product)
         {
             FileName = fileName;
             OriginalFileName = originalFileName;
             Path = path;
             Extension = extension;
             Size = size;
+            Product = product;
         }
 
         public MyFile()
         { }
-
-
-        public abstract bool IsValidExtension();
-
 
         public Guid Id
         {
@@ -61,7 +64,7 @@
             }
         }
 
-        public string Extension
+        public virtual string Extension
         {
             get => _extension;
             set
