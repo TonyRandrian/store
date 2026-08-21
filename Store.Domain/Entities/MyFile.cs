@@ -8,6 +8,7 @@
         private string _extension;
         private Product _product;
 
+
         public MyFile(string fileName, string originalFileName, string path, string extension, long size)
         {
             FileName = fileName;
