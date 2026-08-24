@@ -47,7 +47,7 @@ namespace Store.Application.Features.Products.Commands.UpdateProductImage
             // set null in te file table to remove the link between product-file
             product.RemoveImage(imageFound);
 
-            string extension = ImageValidator.ValidateAndGetExtension(request.File.FileName, _settings.AllowedDocumentExtensions);
+            string extension = ImageValidator.ValidateAndGetExtension(request.File.FileName, _settings.AllowedImageExtensions);
 
             string savedPath = string.Empty;
             try
