@@ -3,12 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi;
 using Store.API.Middlewares;
 using Store.Application;
-using Store.Application.Interfaces.Repositories;
-using Store.Application.Interfaces.Services;
 using Store.Application.Settings;
+using Store.Infrastructure;
 using Store.Infrastructure.Persistence;
-using Store.Infrastructure.Repositories;
-using Store.Infrastructure.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,19 +31,9 @@ builder.Services.AddDbContext<StoreDbContext>(options =>
         builder.Configuration.GetConnectionString("DefaultConnection")
     ));
 
-// Repositories
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IInvoiceRepository, InvoiceRepository>();
-builder.Services.AddScoped<ISupplierRepository, SupplierRepository>();
-builder.Services.AddScoped<IInvoiceDetailsRepository, InvoiceDetailRepository>();
-builder.Services.AddScoped<IImageRepository, ImageRepository>();
-builder.Services.AddScoped<IDocumentRepository, DocumentRepository>();
+builder.Services.AddInfrastructureDI();
 
 builder.Services.AddApplicationDI();
-
-builder.Services.AddScoped<IFileStorageService, LocalFileStorageService>();
 
 builder.Services.Configure<FileStorageSettings>(
     builder.Configuration.GetSection("FileStorage"));
