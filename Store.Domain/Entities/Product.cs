@@ -92,5 +92,10 @@
         {
             Images.Add(image);
         }
+
+        public void RemoveImage(Image image)
+        {
+            Images.Remove(image);
+        }
     }
 }

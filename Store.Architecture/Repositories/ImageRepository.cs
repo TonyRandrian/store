@@ -1,4 +1,5 @@
-﻿using Store.Application.Commons;
+﻿using Microsoft.EntityFrameworkCore;
+using Store.Application.Commons;
 using Store.Application.Interfaces;
 using Store.Domain.Entities;
 using Store.Infrastructure.Persistence;
@@ -18,9 +19,13 @@ namespace Store.Infrastructure.Repositories
             return image;
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            Image? image = await GetById(id)
+                ?? throw new KeyNotFoundException($"No image with the id {id} found");
+
+            _context.Images.Remove(image);
+            await _context.SaveChangesAsync();
         }
 
         public Task<PagedResult<Image>> GetAllAsync(int pageNum, int pageSize)
@@ -28,9 +33,11 @@ namespace Store.Infrastructure.Repositories
             throw new NotImplementedException();
         }
 
-        public Task<Image?> GetById(Guid id)
+        public async Task<Image?> GetById(Guid id)
         {
-            throw new NotImplementedException();
+            return await _context.Images
+                .Include(i => i.Product)
+                .FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public Task<Image> Update(Image image)

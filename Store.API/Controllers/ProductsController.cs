@@ -11,6 +11,7 @@ using Store.Application.DTOs.Products;
 using Store.Application.Features.Products.Commands.AddProductImage;
 using Store.Application.Features.Products.Commands.CreateProduct;
 using Store.Application.Features.Products.Commands.DeleteProduct;
+using Store.Application.Features.Products.Commands.DeleteProductImage;
 using Store.Application.Features.Products.Commands.UpdateProduct;
 using Store.Application.Features.Products.Queries.GetProduct;
 using Store.Application.Features.Products.Queries.GetProductCategory;
@@ -118,7 +119,7 @@ namespace Store.API.Controllers
 
         [HttpPost("{productId:Guid}/images")]
         public async Task<ActionResult<ApiResponse<ImageResponse>>> AddImage(
-            Guid productId,
+            [FromRoute] Guid productId,
             [FromForm] List<IFormFile> files)
         {
             try
@@ -142,6 +143,22 @@ namespace Store.API.Controllers
             catch (ArgumentException ae)
             {
                 return BadRequest(ApiResponse<object>.Error(400, ae.Message));
+            }
+        }
+
+        [HttpDelete("{productId:Guid}/{imageId:Guid}")]
+        public async Task<ActionResult<ApiResponse<object>>> DeleteImage(
+            [FromRoute] Guid productId,
+            [FromRoute] Guid imageId)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteProductImageCommand(productId, imageId));
+                return Ok(ApiResponse<object>.Ok(204, null, "Product's image deleted"));
+            }
+            catch(KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
     }
