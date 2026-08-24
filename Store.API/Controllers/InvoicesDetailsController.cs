@@ -26,44 +26,26 @@ namespace Store.API.Controllers
         public async Task<ActionResult<ApiResponse<InvoiceDetailResponse>>> Create(
             [FromBody] CreateInvoiceDetailRequest request)
         {
-            try
-            {
-                InvoiceDetailResponse response = await _mediator.Send(new CreateInvoiceDetailCommand(
-                    request.InvoiceId, request.ProductId, request.Quantity));
-                return Ok(ApiResponse<InvoiceDetailResponse>.Ok(201, response, "Created Successfully"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            InvoiceDetailResponse response = await _mediator.Send(new CreateInvoiceDetailCommand(
+                request.InvoiceId, request.ProductId, request.Quantity));
+
+            return Ok(ApiResponse<InvoiceDetailResponse>.Ok(201, response, "Created Successfully"));
         }
 
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
-            try
-            {
-                await _mediator.Send(new DeleteInvoiceDetailCommand(id));
-                return Ok(ApiResponse<object>.Ok(204, null, "Invoice detail deleted"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            await _mediator.Send(new DeleteInvoiceDetailCommand(id));
+
+            return Ok(ApiResponse<object>.Ok(204, null, "Invoice detail deleted"));
         }
 
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<InvoiceDetailResponse>>> GetInvoiceDetail([FromRoute] Guid id)
         {
-            try
-            {
-                InvoiceDetailResponse result = await _mediator.Send(new GetInvoiceDetailQuery(id));
-                return Ok(ApiResponse<InvoiceDetailResponse>.Ok(200, result, "Invoice detail retrieved"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            InvoiceDetailResponse result = await _mediator.Send(new GetInvoiceDetailQuery(id));
+
+            return Ok(ApiResponse<InvoiceDetailResponse>.Ok(200, result, "Invoice detail retrieved"));
         }
 
         [HttpGet]
@@ -73,6 +55,7 @@ namespace Store.API.Controllers
         {
             PagedResult<InvoiceDetailResponse> response = await _mediator.Send(new GetInvoicesDetailsQuery(
                 pageNum, pageSize));
+
             return Ok(ApiResponse<PagedResult<InvoiceDetailResponse>>.Ok(200, response, "Invoices details retrieved"));
         }
 
@@ -81,16 +64,10 @@ namespace Store.API.Controllers
             [FromRoute] Guid id,
             [FromBody] UpdateInvoiceDetailRequest request)
         {
-            try
-            {
-                InvoiceDetailResponse response = await _mediator.Send(new UpdateInvoiceDetailCommand(
-                    id, request.ProductId, request.Quantity));
-                return Ok(ApiResponse<InvoiceDetailResponse>.Ok(201, response, "Invoice detail updated"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<InvoiceDetailResponse>.Error(404, knf.Message));
-            }
+            InvoiceDetailResponse response = await _mediator.Send(new UpdateInvoiceDetailCommand(
+                id, request.ProductId, request.Quantity));
+
+            return Ok(ApiResponse<InvoiceDetailResponse>.Ok(201, response, "Invoice detail updated"));
         }
     }
 }

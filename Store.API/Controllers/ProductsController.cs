@@ -39,16 +39,10 @@ namespace Store.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<ProductResponse>>> Create(CreateProductRequest request)
         {
-            try
-            {
-                ProductResponse response = await _mediator.Send(new CreateProductCommand(
-                    request.Name, request.Price, request.CategoryId, request.SuppliersIds));
-                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product created"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return BadRequest(ApiResponse<object>.Error(404, knf.Message));
-            }
+            ProductResponse response = await _mediator.Send(new CreateProductCommand(
+                request.Name, request.Price, request.CategoryId, request.SuppliersIds));
+
+            return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product created"));
         }
 
         [HttpGet]
@@ -64,64 +58,36 @@ namespace Store.API.Controllers
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<ProductResponse>>> GetProduct([FromRoute] Guid id)
         {
-            try
-            {
-                ProductResponse response = await _mediator.Send(new GetProductQuery(id));
-                return Ok(ApiResponse<ProductResponse>.Ok(200, response, "Product retrieved"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            ProductResponse response = await _mediator.Send(new GetProductQuery(id));
+
+            return Ok(ApiResponse<ProductResponse>.Ok(200, response, "Product retrieved"));
         }
 
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
-            try
-            {
-                await _mediator.Send(new DeleteProductCommand(id));
-                return Ok(ApiResponse<object>.Ok(204, null, "Product deleted"));
-            }
-            catch (InvalidOperationException ioe)
-            {
-                return BadRequest(ApiResponse<object>.Error(400, ioe.Message));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            await _mediator.Send(new DeleteProductCommand(id));
+
+            return Ok(ApiResponse<object>.Ok(204, null, "Product deleted"));
         }
 
         [HttpPut("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<ProductResponse>>> Update([FromRoute] Guid id,
             [FromBody] UpdateProductRequest request)
         {
-            try
-            {
-                ProductResponse response = await _mediator.Send(new UpdateProductCommand(
-                    id, request.Name, request.Price, request.CategoryId, request.SuppliersIds));
-                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product updated"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            ProductResponse response = await _mediator.Send(new UpdateProductCommand(
+                id, request.Name, request.Price, request.CategoryId, request.SuppliersIds));
+
+            return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product updated"));
         }
 
         [HttpGet("{id:Guid}/category")]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult<ApiResponse<CategoryResponse>>> GetProductCategory([FromRoute] Guid id)
         {
-            try
-            {
-                CategoryResponse response = await _mediator.Send(new GetProductCategoryQuery(id));
-                return Ok(ApiResponse<CategoryResponse>.Ok(200, response, "Category retrieved"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            CategoryResponse response = await _mediator.Send(new GetProductCategoryQuery(id));
+
+            return Ok(ApiResponse<CategoryResponse>.Ok(200, response, "Category retrieved"));
         }
 
         [HttpPost("{productId:Guid}/images")]
@@ -129,9 +95,7 @@ namespace Store.API.Controllers
             [FromRoute] Guid productId,
             [FromForm] List<IFormFile> files)
         {
-            try
-            {
-                List<CreateProductFile> uploads = [.. files.Select(file =>
+            List<CreateProductFile> uploads = [.. files.Select(file =>
                 new CreateProductFile(
                     file.OpenReadStream(),
                     file.FileName,
@@ -140,17 +104,9 @@ namespace Store.API.Controllers
                     )
                 )];
 
-                ProductResponse response = await _mediator.Send(new AddProductImageCommand(productId, uploads));
-                return Ok(ApiResponse<ProductResponse>.Ok(200, response, "Images added"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
-            catch (ArgumentException ae)
-            {
-                return BadRequest(ApiResponse<object>.Error(400, ae.Message));
-            }
+            ProductResponse response = await _mediator.Send(new AddProductImageCommand(productId, uploads));
+
+            return Ok(ApiResponse<ProductResponse>.Ok(200, response, "Images added"));
         }
 
         [HttpDelete("{productId:Guid}/images/{imageId:Guid}")]
@@ -158,15 +114,9 @@ namespace Store.API.Controllers
             [FromRoute] Guid productId,
             [FromRoute] Guid imageId)
         {
-            try
-            {
-                await _mediator.Send(new DeleteProductImageCommand(productId, imageId));
-                return Ok(ApiResponse<object>.Ok(204, null, "Product's image deleted"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            await _mediator.Send(new DeleteProductImageCommand(productId, imageId));
+
+            return Ok(ApiResponse<object>.Ok(204, null, "Product's image deleted"));
         }
 
         [HttpPatch("{productId:Guid}/images/{imageId:Guid}")]
@@ -175,26 +125,16 @@ namespace Store.API.Controllers
             [FromRoute] Guid imageId,
             [FromForm] ProductFileRequest formFile)
         {
-            try
-            {
-                CreateProductFile file = new(
-                    formFile.File.OpenReadStream(),
-                    formFile.File.FileName,
-                    formFile.File.ContentType,
-                    formFile.File.Length);
+            CreateProductFile file = new(
+                formFile.File.OpenReadStream(),
+                formFile.File.FileName,
+                formFile.File.ContentType,
+                formFile.File.Length);
 
-                ProductResponse response = await _mediator.Send(new UpdateProductImageCommand(
-                    productId, imageId, file));
-                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's image updated"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
-            catch (ArgumentException a)
-            {
-                return BadRequest(ApiResponse<object>.Error(400, a.Message));
-            }
+            ProductResponse response = await _mediator.Send(new UpdateProductImageCommand(
+                productId, imageId, file));
+
+            return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's image updated"));
         }
 
         [HttpPost("{productId:Guid}/document")]
@@ -202,40 +142,24 @@ namespace Store.API.Controllers
             [FromRoute] Guid productId,
             [FromForm] ProductFileRequest formFile)
         {
-            try
-            {
-                CreateProductFile file = new(
-                    formFile.File.OpenReadStream(),
-                    formFile.File.FileName,
-                    formFile.File.ContentType,
-                    formFile.File.Length);
+            CreateProductFile file = new(
+                formFile.File.OpenReadStream(),
+                formFile.File.FileName,
+                formFile.File.ContentType,
+                formFile.File.Length);
 
-                ProductResponse response = await _mediator.Send(new AddProductDocumentCommand(
-                    productId, file));
-                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's document created"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
-            catch (ArgumentException a)
-            {
-                return BadRequest(ApiResponse<object>.Error(400, a.Message));
-            }
+            ProductResponse response = await _mediator.Send(new AddProductDocumentCommand(
+                productId, file));
+
+            return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's document created"));
         }
 
         [HttpDelete("{productId:Guid}/document")]
         public async Task<ActionResult<ApiResponse<object>>> RemoveDocument([FromRoute] Guid productId)
         {
-            try
-            {
-                await _mediator.Send(new RemoveProductDocumentCommand(productId));
-                return Ok(ApiResponse<object>.Ok(201, null, "Product's document removed"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            await _mediator.Send(new RemoveProductDocumentCommand(productId));
+
+            return Ok(ApiResponse<object>.Ok(201, null, "Product's document removed"));
         }
     }
 }

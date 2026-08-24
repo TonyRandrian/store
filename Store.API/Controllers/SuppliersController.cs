@@ -27,31 +27,21 @@ namespace Store.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<SupplierResponse>>> Create(CreateSupplierRequest request)
         {
-            try
-            {
-                SupplierResponse response = await _mediator.Send(new CreateSupplierCommand(
-                    request.Name, request.ProductsIds));
 
-                return Ok(ApiResponse<SupplierResponse>.Ok(201, response, "Supplier created"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            SupplierResponse response = await _mediator.Send(new CreateSupplierCommand(
+                request.Name, request.ProductsIds));
+
+            return Ok(ApiResponse<SupplierResponse>.Ok(201, response, "Supplier created"));
         }
 
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<SupplierResponse>>> GetSupplier([FromRoute] Guid id)
         {
-            try
-            {
-                SupplierResponse response = await _mediator.Send(new GetSupplierQuery(id));
-                return Ok(ApiResponse<SupplierResponse>.Ok(200, response, "Supplier retrieved"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+
+            SupplierResponse response = await _mediator.Send(new GetSupplierQuery(id));
+
+            return Ok(ApiResponse<SupplierResponse>.Ok(200, response, "Supplier retrieved"));
+
         }
 
         [HttpGet]
@@ -61,25 +51,16 @@ namespace Store.API.Controllers
         {
             PagedResult<SupplierResponse> responses = await _mediator.Send(new GetSuppliersQuery(
                 pageNum, pageSize));
+
             return Ok(ApiResponse<PagedResult<SupplierResponse>>.Ok(200, responses, "Suppliers retrieved"));
         }
 
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
-            try
-            {
-                await _mediator.Send(new DeleteSupplierCommand(id));
-                return Ok(ApiResponse<object>.Ok(204, null, "Supplier deleted"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
-            catch (InvalidOperationException ioe)
-            {
-                return BadRequest(ApiResponse<object>.Error(400, ioe.Message));
-            }
+            await _mediator.Send(new DeleteSupplierCommand(id));
+
+            return Ok(ApiResponse<object>.Ok(204, null, "Supplier deleted"));
         }
 
         [HttpPut("{id:Guid}")]
@@ -87,16 +68,10 @@ namespace Store.API.Controllers
             [FromRoute] Guid id,
             [FromBody] UpdateSupplierRequest request)
         {
-            try
-            {
-                SupplierResponse response = await _mediator.Send(new UpdateSupplierCommand(
-                    id, request.Name, request.ProductsIds));
-                return Ok(ApiResponse<SupplierResponse>.Ok(201, response, "Supplier updated"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            SupplierResponse response = await _mediator.Send(new UpdateSupplierCommand(
+                id, request.Name, request.ProductsIds));
+
+            return Ok(ApiResponse<SupplierResponse>.Ok(201, response, "Supplier updated"));
         }
 
         [HttpGet("{supplierId:Guid}/products")]
@@ -107,6 +82,7 @@ namespace Store.API.Controllers
         {
             PagedResult<ProductResponse> response = await _mediator.Send(new GetSupplierProductsQuery(
                 supplierId, pageNum, pageSize));
+
             return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, response, "Products retrieved"));
         }
     }
