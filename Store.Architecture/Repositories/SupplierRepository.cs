@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Store.Application.Commons;
-using Store.Application.Interfaces;
+using Store.Application.Interfaces.Repositories;
 using Store.Domain.Entities;
 using Store.Infrastructure.Persistence;
 

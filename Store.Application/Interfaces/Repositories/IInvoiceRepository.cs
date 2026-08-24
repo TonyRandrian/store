@@ -1,7 +1,7 @@
 ﻿using Store.Application.Commons;
 using Store.Domain.Entities;
 
-namespace Store.Application.Interfaces
+namespace Store.Application.Interfaces.Repositories
 {
     public interface IInvoiceRepository
     {

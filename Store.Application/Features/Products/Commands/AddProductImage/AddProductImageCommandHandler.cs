@@ -2,7 +2,8 @@
 using Microsoft.Extensions.Options;
 using Store.Application.DTOs.Files;
 using Store.Application.DTOs.Products;
-using Store.Application.Interfaces;
+using Store.Application.Interfaces.Repositories;
+using Store.Application.Interfaces.Services;
 using Store.Application.Settings;
 using Store.Domain.Entities;
 

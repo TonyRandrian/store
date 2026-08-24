@@ -1,4 +1,4 @@
-﻿namespace Store.Application.Interfaces
+﻿namespace Store.Application.Interfaces.Repositories
 {
     public interface IFileStorageRepository
     {

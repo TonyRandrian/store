@@ -1,5 +1,6 @@
 ﻿using MediatR;
-using Store.Application.Interfaces;
+using Store.Application.Interfaces.Repositories;
+using Store.Application.Interfaces.Services;
 using Store.Domain.Entities;
 
 namespace Store.Application.Features.Products.Commands.DeleteProductImage

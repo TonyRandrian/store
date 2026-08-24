@@ -1,4 +1,4 @@
-﻿using Store.Application.Interfaces;
+﻿using Store.Application.Interfaces.Repositories;
 
 namespace Store.Infrastructure.Storage
 {

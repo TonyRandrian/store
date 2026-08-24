@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Hosting;
-using Store.Application.Interfaces;
+using Store.Application.Interfaces.Services;
 
 namespace Store.Infrastructure.Services
 {

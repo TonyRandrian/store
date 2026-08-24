@@ -146,7 +146,7 @@ namespace Store.API.Controllers
             }
         }
 
-        [HttpDelete("{productId:Guid}/{imageId:Guid}")]
+        [HttpDelete("{productId:Guid}/images/{imageId:Guid}")]
         public async Task<ActionResult<ApiResponse<object>>> DeleteImage(
             [FromRoute] Guid productId,
             [FromRoute] Guid imageId)
@@ -156,10 +156,19 @@ namespace Store.API.Controllers
                 await _mediator.Send(new DeleteProductImageCommand(productId, imageId));
                 return Ok(ApiResponse<object>.Ok(204, null, "Product's image deleted"));
             }
-            catch(KeyNotFoundException knf)
+            catch (KeyNotFoundException knf)
             {
                 return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
+        }
+
+        [HttpPatch("{productId:Guid}/images/{imageId:Guid}")]
+        public async Task<ActionResult<ApiResponse<ProductResponse>>> UpdateImage(
+            [FromRoute] Guid productId,
+            [FromRoute] Guid imageId,
+            [FromForm] IFormFile file)
+        {
+
         }
     }
 }
