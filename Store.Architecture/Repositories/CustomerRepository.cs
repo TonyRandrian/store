@@ -8,13 +8,13 @@ namespace Store.Infrastructure.Repositories
 {
     public class CustomerRepository(StoreDbContext context) : ICustomerRepository
     {
-        private readonly StoreDbContext Context = context;
+        private readonly StoreDbContext _context = context;
 
 
         public async Task<PagedResult<Customer>> GetAllAsync(int pageNum, int pageSize)
         {
-            int totalRecords = await Context.Customers.CountAsync();
-            List<Customer> data = await Context.Customers
+            int totalRecords = await _context.Customers.CountAsync();
+            List<Customer> data = await _context.Customers
                 .Include(c => c.Invoices)
                 .AsNoTracking()
                 .OrderBy(c => c.Id)
@@ -33,23 +33,23 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Customer?> GetByIdAsync(Guid id)
         {
-            return await Context.Customers
+            return await _context.Customers
                 .Include(c => c.Invoices)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<Customer> AddAsync(Customer customer)
         {
-            await Context.Customers.AddAsync(customer);
-            await Context.SaveChangesAsync();
+            await _context.Customers.AddAsync(customer);
+            await _context.SaveChangesAsync();
 
             return customer;
         }
 
         public async Task<Customer> UpdateAsync(Customer customer)
         {
-            Context.Customers.Update(customer);
-            await Context.SaveChangesAsync();
+            _context.Customers.Update(customer);
+            await _context.SaveChangesAsync();
 
             return customer;
         }
@@ -59,13 +59,13 @@ namespace Store.Infrastructure.Repositories
             Customer? customer = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No customer with the id {id} found");
 
-            Context.Customers.Remove(customer);
-            await Context.SaveChangesAsync();
+            _context.Customers.Remove(customer);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> IsUsed(Guid id)
         {
-            return await Context.Invoices.AnyAsync(i => i.Customer.Id == id);
+            return await _context.Invoices.AnyAsync(i => i.Customer.Id == id);
         }
     }
 }

@@ -8,13 +8,13 @@ namespace Store.Infrastructure.Repositories
 {
     public class InvoiceRepository(StoreDbContext context) : IInvoiceRepository
     {
-        private readonly StoreDbContext Context = context;
+        private readonly StoreDbContext _context = context;
 
             
         public async Task<PagedResult<Invoice>> GetAllAsync(int pageNum, int pageSize)
         {
-            int totalRecords = await Context.Invoices.CountAsync();
-            List<Invoice> invoices = await Context.Invoices
+            int totalRecords = await _context.Invoices.CountAsync();
+            List<Invoice> invoices = await _context.Invoices
                 .Include(i => i.Customer)
                 .AsNoTracking()
                 .OrderBy(i => i.Id)
@@ -33,23 +33,23 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Invoice?> GetByIdAsync(Guid id)
         {
-            return await Context.Invoices
+            return await _context.Invoices
                 .Include(i => i.Customer)
                 .FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<Invoice> AddAsync(Invoice invoice)
         {
-            await Context.Invoices.AddAsync(invoice);
-            await Context.SaveChangesAsync();
+            await _context.Invoices.AddAsync(invoice);
+            await _context.SaveChangesAsync();
 
             return invoice;
         }
 
         public async Task<Invoice> UpdateAsync(Invoice invoice)
         {
-            Context.Invoices.Update(invoice);
-            await Context.SaveChangesAsync();
+            _context.Invoices.Update(invoice);
+            await _context.SaveChangesAsync();
 
             return invoice;
         }
@@ -59,8 +59,8 @@ namespace Store.Infrastructure.Repositories
             Invoice? invoice = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No invoice with the id {id} found");
 
-            Context.Invoices.Remove(invoice);
-            await Context.SaveChangesAsync();
+            _context.Invoices.Remove(invoice);
+            await _context.SaveChangesAsync();
         }
     }
 }

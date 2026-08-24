@@ -8,13 +8,13 @@ namespace Store.Infrastructure.Repositories
 {
     public class ProductRepository(StoreDbContext context) : IProductRepository
     {
-        private readonly StoreDbContext Context = context;
+        private readonly StoreDbContext _context = context;
 
 
         public async Task<PagedResult<Product>> GetAllAsync(int pageNum, int pageSize)
         {
-            int totalRecords = await Context.Products.CountAsync();
-            List<Product> products = await Context.Products
+            int totalRecords = await _context.Products.CountAsync();
+            List<Product> products = await _context.Products
                 .Include(p => p.Suppliers)
                 .Include(p => p.Images)
                 .Include(p => p.Document)
@@ -37,7 +37,7 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Product?> GetByIdAsync(Guid id)
         {
-            return await Context.Products
+            return await _context.Products
                 .Include(p => p.Suppliers)
                 .Include(p => p.Images)
                 .Include(p => p.Document)
@@ -48,16 +48,16 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Product> AddAsync(Product product)
         {
-            await Context.Products.AddAsync(product);
-            await Context.SaveChangesAsync();
+            await _context.Products.AddAsync(product);
+            await _context.SaveChangesAsync();
 
             return product;
         }
 
         public async Task<Product> UpdateAsync(Product product)
         {
-            Context.Products.Update(product);
-            await Context.SaveChangesAsync();
+            _context.Products.Update(product);
+            await _context.SaveChangesAsync();
 
             return product;
         }
@@ -67,19 +67,19 @@ namespace Store.Infrastructure.Repositories
             Product? product = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No product with the id {id} found");
 
-            Context.Products.Remove(product);
-            await Context.SaveChangesAsync();
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> IsUsed(Guid id)
         {
-            return await Context.Suppliers
+            return await _context.Suppliers
                 .AnyAsync(s => s.Products.Any(p => p.Id == id));
         }
 
         public async Task<Category?> GetProductCategory(Guid productId)
         {
-            Category? category = await Context.Products
+            Category? category = await _context.Products
                 .Where(p => p.Id == productId)
                 .Select(p => p.Category)
                 .FirstOrDefaultAsync();
