@@ -18,7 +18,9 @@ namespace Store.API.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<PagedResult<ImageResponse>>>> GetImages(int pageNum, int pageSize)
+        public async Task<ActionResult<ApiResponse<PagedResult<ImageResponse>>>> GetImages(
+            [FromQuery] int pageNum,
+            [FromQuery] int pageSize)
         {
             PagedResult<ImageResponse> responses = await _mediator.Send(new GetImagesQuery(pageNum, pageSize));
             return Ok(ApiResponse<PagedResult<ImageResponse>>.Ok(200, responses, "Images retrieved"));
