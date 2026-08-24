@@ -6,8 +6,7 @@
         private string _originalFileName;
         private string _path;
         private string _extension;
-        private Product _product;
-
+        private Product? _product;
 
         public MyFile(
             string fileName, 
@@ -80,7 +79,7 @@
             set;
         }
 
-        public Product Product
+        public Product? Product
         {
             get => _product;
             set

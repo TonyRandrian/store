@@ -35,8 +35,12 @@ namespace Store.Application.Features.Products.Commands.DeleteProductImage
                 throw new KeyNotFoundException($"This product does not contain any image with the id {request.ImageId}");
             }
 
-            // remove from database
-            await _imageRepository.DeleteAsync(imageFound.Id);
+            // remove from product-images table
+            product.RemoveImage(imageFound);
+            await _productRepository.UpdateAsync(product);
+
+            // remove from images table
+            //await _imageRepository.DeleteAsync(imageFound.Id);
 
             // remove from storage
             await _fileStorageService.DeleteAsync(
