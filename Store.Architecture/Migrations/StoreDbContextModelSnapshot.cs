@@ -119,13 +119,52 @@ namespace Store.Infrastructure.Migrations
                     b.ToTable("InvoiceDetails");
                 });
 
+            modelBuilder.Entity("Store.Domain.Entities.MyFile", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("Size")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Files");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("MyFile");
+
+                    b.UseTphMappingStrategy();
+                });
+
             modelBuilder.Entity("Store.Domain.Entities.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("CategoryId")
+                    b.Property<Guid>("CategoryId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Name")
@@ -155,6 +194,37 @@ namespace Store.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Suppliers");
+                });
+
+            modelBuilder.Entity("Store.Domain.Entities.Document", b =>
+                {
+                    b.HasBaseType("Store.Domain.Entities.MyFile");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("ProductId")
+                        .IsUnique();
+
+                    b.ToTable("Files", t =>
+                        {
+                            t.Property("ProductId")
+                                .HasColumnName("Document_ProductId");
+                        });
+
+                    b.HasDiscriminator().HasValue("Document");
+                });
+
+            modelBuilder.Entity("Store.Domain.Entities.Image", b =>
+                {
+                    b.HasBaseType("Store.Domain.Entities.MyFile");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasDiscriminator().HasValue("Image");
                 });
 
             modelBuilder.Entity("ProductSupplier", b =>
@@ -215,9 +285,33 @@ namespace Store.Infrastructure.Migrations
                 {
                     b.HasOne("Store.Domain.Entities.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Store.Domain.Entities.Document", b =>
+                {
+                    b.HasOne("Store.Domain.Entities.Product", "Product")
+                        .WithOne("Document")
+                        .HasForeignKey("Store.Domain.Entities.Document", "ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Store.Domain.Entities.Image", b =>
+                {
+                    b.HasOne("Store.Domain.Entities.Product", "Product")
+                        .WithMany("Images")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
                 });
 
             modelBuilder.Entity("Store.Domain.Entities.Category", b =>
@@ -230,6 +324,13 @@ namespace Store.Infrastructure.Migrations
             modelBuilder.Entity("Store.Domain.Entities.Customer", b =>
                 {
                     b.Navigation("Invoices");
+                });
+
+            modelBuilder.Entity("Store.Domain.Entities.Product", b =>
+                {
+                    b.Navigation("Document");
+
+                    b.Navigation("Images");
                 });
 #pragma warning restore 612, 618
         }

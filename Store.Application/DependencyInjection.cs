@@ -1,6 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Store.Application.UseCases.InvoicesDetails;
-using Store.Application.UseCases.Products;
 
 namespace Store.Application
 {

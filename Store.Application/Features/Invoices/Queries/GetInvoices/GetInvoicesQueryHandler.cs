@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Store.Application.Commons;
 using Store.Application.DTOs.Invoices;
-using Store.Application.Interfaces;
+using Store.Application.Interfaces.Repositories;
 using Store.Domain.Entities;
 
 namespace Store.Application.Features.Invoices.Queries.GetInvoices

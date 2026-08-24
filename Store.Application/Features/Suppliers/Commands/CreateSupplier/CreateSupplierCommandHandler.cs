@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Store.Application.DTOs.Suppliers;
-using Store.Application.Interfaces;
+using Store.Application.Interfaces.Repositories;
 using Store.Domain.Entities;
 
 namespace Store.Application.Features.Suppliers.Commands.CreateSupplier

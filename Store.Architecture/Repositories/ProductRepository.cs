@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Store.Application.Commons;
-using Store.Application.Interfaces;
+using Store.Application.Interfaces.Repositories;
 using Store.Domain.Entities;
 using Store.Infrastructure.Persistence;
 
@@ -16,6 +16,8 @@ namespace Store.Infrastructure.Repositories
             int totalRecords = await Context.Products.CountAsync();
             List<Product> products = await Context.Products
                 .Include(p => p.Suppliers)
+                .Include(p => p.Images)
+                .Include(p => p.Document)
                 .Include(p => p.Category)
                 .ThenInclude(c => c!.Parent)
                 .AsNoTracking()
@@ -37,6 +39,8 @@ namespace Store.Infrastructure.Repositories
         {
             return await Context.Products
                 .Include(p => p.Suppliers)
+                .Include(p => p.Images)
+                .Include(p => p.Document)
                 .Include(p => p.Category)
                 .ThenInclude(c => c!.Parent)
                 .FirstOrDefaultAsync(p => p.Id == id);

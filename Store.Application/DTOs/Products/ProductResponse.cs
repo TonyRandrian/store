@@ -1,4 +1,5 @@
 ﻿using Store.Application.DTOs.Categories;
+using Store.Application.DTOs.Files.Images;
 using Store.Domain.Entities;
 
 namespace Store.Application.DTOs.Products
@@ -10,15 +11,26 @@ namespace Store.Application.DTOs.Products
         public decimal Price { get; set; }
         public CategoryResponse Category { get; set; }
         public HashSet<Guid> SuppliersIds { get; set; }
+        public List<ImageResponse> Images { get; set; } = [];
+        public DocumentResponse Document { get; set; }
 
 
-        public ProductResponse(Guid id, string name, decimal price, CategoryResponse category, HashSet<Guid> suppliersIds)
+        public ProductResponse(
+            Guid id,
+            string name,
+            decimal price,
+            CategoryResponse category,
+            HashSet<Guid> suppliersIds,
+            List<ImageResponse> images,
+            DocumentResponse document)
         {
             Id = id;
             Name = name;
             Price = price;
             Category = category;
             SuppliersIds = suppliersIds;
+            Images = images;
+            Document = document;
         }
 
         public ProductResponse(Product product)
@@ -27,11 +39,17 @@ namespace Store.Application.DTOs.Products
             Name = product.Name;
             Price = product.Price;
             Category = new CategoryResponse(product.Category!);
-            SuppliersIds = [];
 
+            SuppliersIds = [];
             foreach (Supplier supplier in product.Suppliers)
             {
                 SuppliersIds.Add(supplier.Id);
+            }
+
+            Images = [];
+            foreach (Image image in product.Images)
+            {
+                Images.Add(new ImageResponse(image));
             }
         }
     }

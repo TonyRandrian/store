@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using Store.Application.Interfaces;
+using Store.Application.Interfaces.Repositories;
 
 namespace Store.Application.Features.Categories.Commands.DeleteCategory
 {

@@ -1,8 +1,7 @@
 ﻿using MediatR;
 using Store.Application.Commons;
 using Store.Application.DTOs.Customers;
-using Store.Application.Interfaces;
-using Store.Application.UseCases.Customers;
+using Store.Application.Interfaces.Repositories;
 using Store.Domain.Entities;
 
 namespace Store.Application.Features.Customers.Queries.GetCustomers

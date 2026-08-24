@@ -1,17 +1,22 @@
 ﻿using Asp.Versioning;
 using MediatR;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
 using Store.Application.DTOs.Categories;
+using Store.Application.DTOs.Files;
+using Store.Application.DTOs.Files.Images;
 using Store.Application.DTOs.Products;
+using Store.Application.Features.Products.Commands.AddProductImage;
 using Store.Application.Features.Products.Commands.CreateProduct;
 using Store.Application.Features.Products.Commands.DeleteProduct;
+using Store.Application.Features.Products.Commands.DeleteProductImage;
 using Store.Application.Features.Products.Commands.UpdateProduct;
+using Store.Application.Features.Products.Commands.UpdateProductImage;
 using Store.Application.Features.Products.Queries.GetProduct;
 using Store.Application.Features.Products.Queries.GetProductCategory;
 using Store.Application.Features.Products.Queries.GetProducts;
-using Store.Application.UseCases.Products;
 
 namespace Store.API.Controllers
 {
@@ -112,5 +117,83 @@ namespace Store.API.Controllers
                 return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
+
+        [HttpPost("{productId:Guid}/images")]
+        public async Task<ActionResult<ApiResponse<ImageResponse>>> AddImage(
+            [FromRoute] Guid productId,
+            [FromForm] List<IFormFile> files)
+        {
+            try
+            {
+                List<CreateProductFile> uploads = [.. files.Select(file =>
+                new CreateProductFile(
+                    file.OpenReadStream(),
+                    file.FileName,
+                    file.ContentType,
+                    file.Length
+                    )
+                )];
+
+                ProductResponse response = await _mediator.Send(new AddProductImageCommand(productId, uploads));
+                return Ok(ApiResponse<ProductResponse>.Ok(200, response, "Images added"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+            catch (ArgumentException ae)
+            {
+                return BadRequest(ApiResponse<object>.Error(400, ae.Message));
+            }
+        }
+
+        [HttpDelete("{productId:Guid}/images/{imageId:Guid}")]
+        public async Task<ActionResult<ApiResponse<object>>> DeleteImage(
+            [FromRoute] Guid productId,
+            [FromRoute] Guid imageId)
+        {
+            try
+            {
+                await _mediator.Send(new DeleteProductImageCommand(productId, imageId));
+                return Ok(ApiResponse<object>.Ok(204, null, "Product's image deleted"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+        }
+
+        [HttpPatch("{productId:Guid}/images/{imageId:Guid}")]
+        public async Task<ActionResult<ApiResponse<ProductResponse>>> UpdateImage(
+            [FromRoute] Guid productId,
+            [FromRoute] Guid imageId,
+            [FromForm] UpdateProductImageRequest formFile)
+        {
+            try
+            {
+                CreateProductFile file = new(
+                    formFile.File.OpenReadStream(),
+                    formFile.File.FileName,
+                    formFile.File.ContentType,
+                    formFile.File.Length);
+
+                ProductResponse response = await _mediator.Send(new UpdateProductImageCommand(
+                    productId, imageId, file));
+                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's image updated"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+            catch (ArgumentException a)
+            {
+                return BadRequest(ApiResponse<object>.Error(400, a.Message));
+            }
+        }
+    }
+
+    public class UpdateProductImageRequest
+    {
+        public IFormFile File { get; set; }
     }
 }
