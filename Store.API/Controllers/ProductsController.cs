@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
@@ -8,10 +7,12 @@ using Store.Application.DTOs.Categories;
 using Store.Application.DTOs.Files;
 using Store.Application.DTOs.Files.Images;
 using Store.Application.DTOs.Products;
+using Store.Application.Features.Products.Commands.AddProductDocument;
 using Store.Application.Features.Products.Commands.AddProductImage;
 using Store.Application.Features.Products.Commands.CreateProduct;
 using Store.Application.Features.Products.Commands.DeleteProduct;
 using Store.Application.Features.Products.Commands.DeleteProductImage;
+using Store.Application.Features.Products.Commands.RemoveProductDocument;
 using Store.Application.Features.Products.Commands.UpdateProduct;
 using Store.Application.Features.Products.Commands.UpdateProductImage;
 using Store.Application.Features.Products.Queries.GetProduct;
@@ -20,6 +21,11 @@ using Store.Application.Features.Products.Queries.GetProducts;
 
 namespace Store.API.Controllers
 {
+    public class ProductFileRequest
+    {
+        public IFormFile File { get; set; }
+    }
+
     [ApiController]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
@@ -167,7 +173,7 @@ namespace Store.API.Controllers
         public async Task<ActionResult<ApiResponse<ProductResponse>>> UpdateImage(
             [FromRoute] Guid productId,
             [FromRoute] Guid imageId,
-            [FromForm] UpdateProductImageRequest formFile)
+            [FromForm] ProductFileRequest formFile)
         {
             try
             {
@@ -190,10 +196,46 @@ namespace Store.API.Controllers
                 return BadRequest(ApiResponse<object>.Error(400, a.Message));
             }
         }
-    }
 
-    public class UpdateProductImageRequest
-    {
-        public IFormFile File { get; set; }
+        [HttpPost("{productId:Guid}/document")]
+        public async Task<ActionResult<ApiResponse<ProductResponse>>> CreateDocument(
+            [FromRoute] Guid productId,
+            [FromForm] ProductFileRequest formFile)
+        {
+            try
+            {
+                CreateProductFile file = new(
+                    formFile.File.OpenReadStream(),
+                    formFile.File.FileName,
+                    formFile.File.ContentType,
+                    formFile.File.Length);
+
+                ProductResponse response = await _mediator.Send(new AddProductDocumentCommand(
+                    productId, file));
+                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's document created"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+            catch (ArgumentException a)
+            {
+                return BadRequest(ApiResponse<object>.Error(400, a.Message));
+            }
+        }
+
+        [HttpDelete("{productId:Guid}/document")]
+        public async Task<ActionResult<ApiResponse<object>>> RemoveDocument([FromRoute] Guid productId)
+        {
+            try
+            {
+                await _mediator.Send(new RemoveProductDocumentCommand(productId));
+                return Ok(ApiResponse<object>.Ok(201, null, "Product's document removed"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+        }
     }
 }
