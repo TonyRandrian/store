@@ -12,6 +12,7 @@ using Store.Application.Features.Products.Commands.AddProductImage;
 using Store.Application.Features.Products.Commands.CreateProduct;
 using Store.Application.Features.Products.Commands.DeleteProduct;
 using Store.Application.Features.Products.Commands.DeleteProductImage;
+using Store.Application.Features.Products.Commands.RemoveProductDocument;
 using Store.Application.Features.Products.Commands.UpdateProduct;
 using Store.Application.Features.Products.Commands.UpdateProductImage;
 using Store.Application.Features.Products.Queries.GetProduct;
@@ -220,6 +221,20 @@ namespace Store.API.Controllers
             catch (ArgumentException a)
             {
                 return BadRequest(ApiResponse<object>.Error(400, a.Message));
+            }
+        }
+
+        [HttpDelete("{productId:Guid}/document")]
+        public async Task<ActionResult<ApiResponse<object>>> RemoveDocument([FromRoute] Guid productId)
+        {
+            try
+            {
+                await _mediator.Send(new RemoveProductDocumentCommand(productId));
+                return Ok(ApiResponse<object>.Ok(201, null, "Product's document removed"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
             }
         }
     }
