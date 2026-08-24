@@ -33,7 +33,7 @@ namespace Store.API.Controllers
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<CustomerResponse>>> GetCustomer([FromRoute] Guid id)
         {
-            CustomerResponse? response = await _mediator.Send(new GetCustomerQuery(id));
+            CustomerResponse response = await _mediator.Send(new GetCustomerQuery(id));
 
             return Ok(ApiResponse<CustomerResponse>.Ok(200, response, "Customer retrieved"));
         }

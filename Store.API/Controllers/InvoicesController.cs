@@ -23,7 +23,7 @@ namespace Store.API.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<InvoiceResponse>> Create([FromBody] CreateInvoiceRequest request)
+        public async Task<ActionResult<ApiResponse<InvoiceResponse>>> Create([FromBody] CreateInvoiceRequest request)
         {
             InvoiceResponse response = await _mediator.Send(new CreateInvoiceCommand(
                 request.Reference, request.Total, request.CustomerId));

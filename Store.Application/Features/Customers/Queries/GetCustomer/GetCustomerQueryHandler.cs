@@ -13,7 +13,7 @@ namespace Store.Application.Features.Customers.Queries.GetCustomer
 
         public async Task<CustomerResponse> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
         {
-            Customer? customer = await _customerRepository.GetByIdAsync(request.Id)
+            Customer customer = await _customerRepository.GetByIdAsync(request.Id)
                 ?? throw new KeyNotFoundException($"No customer with the id {request.Id} found");
 
             return new CustomerResponse(customer);
