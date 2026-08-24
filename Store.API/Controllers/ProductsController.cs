@@ -167,15 +167,15 @@ namespace Store.API.Controllers
         public async Task<ActionResult<ApiResponse<ProductResponse>>> UpdateImage(
             [FromRoute] Guid productId,
             [FromRoute] Guid imageId,
-            [FromForm] IFormFile formFile)
+            [FromForm] UpdateProductImageRequest formFile)
         {
             try
             {
                 CreateProductFile file = new(
-                    formFile.OpenReadStream(),
-                    formFile.FileName,
-                    formFile.ContentType,
-                    formFile.Length);
+                    formFile.File.OpenReadStream(),
+                    formFile.File.FileName,
+                    formFile.File.ContentType,
+                    formFile.File.Length);
 
                 ProductResponse response = await _mediator.Send(new UpdateProductImageCommand(
                     productId, imageId, file));
@@ -190,5 +190,10 @@ namespace Store.API.Controllers
                 return BadRequest(ApiResponse<object>.Error(400, a.Message));
             }
         }
+    }
+
+    public class UpdateProductImageRequest
+    {
+        public IFormFile File { get; set; }
     }
 }
