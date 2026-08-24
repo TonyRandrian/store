@@ -22,6 +22,7 @@ namespace Store.Application.Features.Products.Commands.AddProductImage
 
         public async Task<ProductResponse> Handle(AddProductImageCommand request, CancellationToken cancellationToken)
         {
+            // validation
             Product product = await _productRepository.GetByIdAsync(request.Id)
                 ?? throw new KeyNotFoundException($"No product with the id {request.Id} found");
 

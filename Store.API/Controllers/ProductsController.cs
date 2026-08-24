@@ -13,6 +13,7 @@ using Store.Application.Features.Products.Commands.CreateProduct;
 using Store.Application.Features.Products.Commands.DeleteProduct;
 using Store.Application.Features.Products.Commands.DeleteProductImage;
 using Store.Application.Features.Products.Commands.UpdateProduct;
+using Store.Application.Features.Products.Commands.UpdateProductImage;
 using Store.Application.Features.Products.Queries.GetProduct;
 using Store.Application.Features.Products.Queries.GetProductCategory;
 using Store.Application.Features.Products.Queries.GetProducts;
@@ -166,9 +167,28 @@ namespace Store.API.Controllers
         public async Task<ActionResult<ApiResponse<ProductResponse>>> UpdateImage(
             [FromRoute] Guid productId,
             [FromRoute] Guid imageId,
-            [FromForm] IFormFile file)
+            [FromForm] IFormFile formFile)
         {
+            try
+            {
+                CreateProductFile file = new(
+                    formFile.OpenReadStream(),
+                    formFile.FileName,
+                    formFile.ContentType,
+                    formFile.Length);
 
+                ProductResponse response = await _mediator.Send(new UpdateProductImageCommand(
+                    productId, imageId, file));
+                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's image updated"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+            catch (ArgumentException a)
+            {
+                return BadRequest(ApiResponse<object>.Error(400, a.Message));
+            }
         }
     }
 }
