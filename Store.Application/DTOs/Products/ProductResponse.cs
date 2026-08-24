@@ -12,7 +12,7 @@ namespace Store.Application.DTOs.Products
         public CategoryResponse Category { get; set; }
         public HashSet<Guid> SuppliersIds { get; set; }
         public List<ImageResponse> Images { get; set; } = [];
-        public DocumentResponse Document { get; set; }
+        public DocumentResponse? Document { get; set; }
 
 
         public ProductResponse(
@@ -51,6 +51,9 @@ namespace Store.Application.DTOs.Products
             {
                 Images.Add(new ImageResponse(image));
             }
+
+            Document = product.Document == null ? null :
+                new DocumentResponse(product.Document);
         }
     }
 }

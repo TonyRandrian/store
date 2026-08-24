@@ -2,7 +2,7 @@
 {
     public class Document : MyFile
     {
-        public Guid ProductId
+        public Guid? ProductId
         {
             get;
             set;

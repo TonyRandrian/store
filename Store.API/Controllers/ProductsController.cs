@@ -7,6 +7,7 @@ using Store.Application.DTOs.Categories;
 using Store.Application.DTOs.Files;
 using Store.Application.DTOs.Files.Images;
 using Store.Application.DTOs.Products;
+using Store.Application.Features.Products.Commands.AddProductDocument;
 using Store.Application.Features.Products.Commands.AddProductImage;
 using Store.Application.Features.Products.Commands.CreateProduct;
 using Store.Application.Features.Products.Commands.DeleteProduct;
@@ -19,7 +20,7 @@ using Store.Application.Features.Products.Queries.GetProducts;
 
 namespace Store.API.Controllers
 {
-    public class UpdateProductImageRequest
+    public class ProductFileRequest
     {
         public IFormFile File { get; set; }
     }
@@ -171,7 +172,7 @@ namespace Store.API.Controllers
         public async Task<ActionResult<ApiResponse<ProductResponse>>> UpdateImage(
             [FromRoute] Guid productId,
             [FromRoute] Guid imageId,
-            [FromForm] UpdateProductImageRequest formFile)
+            [FromForm] ProductFileRequest formFile)
         {
             try
             {
@@ -184,6 +185,33 @@ namespace Store.API.Controllers
                 ProductResponse response = await _mediator.Send(new UpdateProductImageCommand(
                     productId, imageId, file));
                 return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's image updated"));
+            }
+            catch (KeyNotFoundException knf)
+            {
+                return NotFound(ApiResponse<object>.Error(404, knf.Message));
+            }
+            catch (ArgumentException a)
+            {
+                return BadRequest(ApiResponse<object>.Error(400, a.Message));
+            }
+        }
+
+        [HttpPost("{productId:Guid}/document")]
+        public async Task<ActionResult<ApiResponse<ProductResponse>>> CreateDocument(
+            [FromRoute] Guid productId,
+            [FromForm] ProductFileRequest formFile)
+        {
+            try
+            {
+                CreateProductFile file = new(
+                    formFile.File.OpenReadStream(),
+                    formFile.File.FileName,
+                    formFile.File.ContentType,
+                    formFile.File.Length);
+
+                ProductResponse response = await _mediator.Send(new AddProductDocumentCommand(
+                    productId, file));
+                return Ok(ApiResponse<ProductResponse>.Ok(201, response, "Product's document created"));
             }
             catch (KeyNotFoundException knf)
             {
