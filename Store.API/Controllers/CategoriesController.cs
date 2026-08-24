@@ -28,17 +28,10 @@ namespace Store.API.Controllers
         [HttpPost]
         public async Task<ActionResult<ApiResponse<CategoryResponse>>> Create(CreateCategoryRequest request)
         {
-            try
-            {
-                CategoryResponse response = await _mediator.Send(
-                    new CreateCategoryCommand(request.Name, request.ParentCategoryId));
+            CategoryResponse response = await _mediator.Send(
+                new CreateCategoryCommand(request.Name, request.ParentCategoryId));
 
-                return Ok(ApiResponse<CategoryResponse>.Ok(201, response, "Category created successfully"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            return Ok(ApiResponse<CategoryResponse>.Ok(201, response, "Category created successfully"));
         }
 
         [HttpGet]
@@ -54,32 +47,17 @@ namespace Store.API.Controllers
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<CategoryResponse>>> GetCategory([FromRoute] Guid id)
         {
-            CategoryResponse? response = await _mediator.Send(new GetCategoryQuery(id));
+            CategoryResponse response = await _mediator.Send(new GetCategoryQuery(id));
 
-            if (response != null)
-            {
-                return Ok(ApiResponse<CategoryResponse>.Ok(200, response, "Category retrieved"));
-            }
-
-            return NotFound(ApiResponse<object>.Error(404, $"No category with the id {id} found"));
+            return Ok(ApiResponse<CategoryResponse>.Ok(200, response, "Category retrieved"));
         }
 
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
-            try
-            {
-                await _mediator.Send(new DeleteCategoryCommand(id));
-                return Ok(ApiResponse<object>.Ok(204, null, "Category deleted"));
-            }
-            catch (InvalidOperationException ioe)
-            {
-                return BadRequest(ApiResponse<object>.Error(400, ioe.Message));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            await _mediator.Send(new DeleteCategoryCommand(id));
+
+            return Ok(ApiResponse<object>.Ok(204, null, "Category deleted"));
         }
 
         [HttpPut("{id:Guid}")]
@@ -87,23 +65,13 @@ namespace Store.API.Controllers
             [FromRoute] Guid id,
             [FromBody] UpdateCategoryRequest request)
         {
-            try
-            {
-                CategoryResponse response = await _mediator.Send(new UpdateCategoryCommand(
-                    id, request.Name, request.ParentCategoryId));
-                return Ok(ApiResponse<CategoryResponse>.Ok(201, response, "Category updated"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<CategoryResponse>.Error(404, knf.Message));
-            }
-            catch (InvalidOperationException ioe)
-            {
-                return BadRequest(ApiResponse<CategoryResponse>.Error(400, ioe.Message));
-            }
+            CategoryResponse response = await _mediator.Send(new UpdateCategoryCommand(
+                id, request.Name, request.ParentCategoryId));
+
+            return Ok(ApiResponse<CategoryResponse>.Ok(201, response, "Category updated"));
         }
 
-        [HttpGet("{productId:Guid}/products")]
+        [HttpGet("{categoryId:Guid}/products")]
         [MapToApiVersion("2.0")]
         public async Task<ActionResult<ApiResponse<PagedResult<ProductResponse>>>> GetProducts(
             [FromRoute] Guid categoryId,
@@ -112,6 +80,7 @@ namespace Store.API.Controllers
         {
             PagedResult<ProductResponse> responses = await _mediator.Send(new GetCategoryProductsQuery(
                 categoryId, pageNum, pageSize));
+
             return Ok(ApiResponse<PagedResult<ProductResponse>>.Ok(200, responses, "Products retrieved"));
         }
 
@@ -122,16 +91,10 @@ namespace Store.API.Controllers
             [FromQuery] int pageNum,
             [FromQuery] int pageSize)
         {
-            try
-            {
-                PagedResult<CategoryResponse> responses = await _mediator.Send(new GetCategoryChildrenQuery(
-                    categoryId, pageNum, pageSize));
-                return Ok(ApiResponse<PagedResult<CategoryResponse>>.Ok(200, responses, "Category retrieved"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<object>.Error(404, knf.Message));
-            }
+            PagedResult<CategoryResponse> responses = await _mediator.Send(new GetCategoryChildrenQuery(
+                categoryId, pageNum, pageSize));
+
+            return Ok(ApiResponse<PagedResult<CategoryResponse>>.Ok(200, responses, "Category retrieved"));
         }
     }
 }

@@ -6,16 +6,17 @@ using Store.Domain.Entities;
 namespace Store.Application.Features.Categories.Queries.GetCategory
 {
     public class GetCategoryQueryHandler(ICategoryRepository categoryRepository)
-        : IRequestHandler<GetCategoryQuery, CategoryResponse?>
+        : IRequestHandler<GetCategoryQuery, CategoryResponse>
     {
         private readonly ICategoryRepository _categoryRepository = categoryRepository;
 
 
-        public async Task<CategoryResponse?> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
+        public async Task<CategoryResponse> Handle(GetCategoryQuery request, CancellationToken cancellationToken)
         {
-            Category? category = await _categoryRepository.GetByIdAsync(request.Id);
+            Category category = await _categoryRepository.GetByIdAsync(request.Id)
+                ?? throw new KeyNotFoundException($"No category with the id {request.Id} found");
 
-            return category == null ? null : new CategoryResponse(category);
+            return new CategoryResponse(category);
         }
     }
 }
