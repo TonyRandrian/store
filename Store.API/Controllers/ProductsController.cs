@@ -1,6 +1,5 @@
 ﻿using Asp.Versioning;
 using MediatR;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Store.API.Commons;
 using Store.Application.Commons;
@@ -20,6 +19,11 @@ using Store.Application.Features.Products.Queries.GetProducts;
 
 namespace Store.API.Controllers
 {
+    public class UpdateProductImageRequest
+    {
+        public IFormFile File { get; set; }
+    }
+
     [ApiController]
     [ApiVersion("1.0")]
     [ApiVersion("2.0")]
@@ -190,10 +194,5 @@ namespace Store.API.Controllers
                 return BadRequest(ApiResponse<object>.Error(400, a.Message));
             }
         }
-    }
-
-    public class UpdateProductImageRequest
-    {
-        public IFormFile File { get; set; }
     }
 }

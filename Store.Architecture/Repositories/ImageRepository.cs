@@ -28,9 +28,25 @@ namespace Store.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public Task<PagedResult<Image>> GetAllAsync(int pageNum, int pageSize)
+        public async Task<PagedResult<Image>> GetAllAsync(int pageNum, int pageSize)
         {
-            throw new NotImplementedException();
+            int totalRecords = await _context.Images.CountAsync();
+
+            List<Image> data = await _context.Images
+                .Include(i => i.Product)
+                .AsNoTracking()
+                .OrderBy(i => i.Id)
+                .Skip((pageNum - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Image>
+            {
+                Data = data,
+                TotalRecords = totalRecords,
+                PageNumber = pageNum,
+                PageSize = pageSize
+            };
         }
 
         public async Task<Image?> GetById(Guid id)
