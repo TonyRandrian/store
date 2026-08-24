@@ -6,6 +6,7 @@ using Store.Application.Interfaces.Repositories;
 using Store.Application.Interfaces.Services;
 using Store.Application.Settings;
 using Store.Domain.Entities;
+using Store.Domain.Validators;
 
 namespace Store.Application.Features.Products.Commands.UpdateProductImage
 {
@@ -46,14 +47,7 @@ namespace Store.Application.Features.Products.Commands.UpdateProductImage
             // set null in te file table to remove the link between product-file
             product.RemoveImage(imageFound);
 
-            string extension = Path.GetExtension(request.File.FileName)
-                                .TrimStart('.')
-                                .ToLowerInvariant();
-
-            if (!_settings.AllowedImageExtensions.Contains(extension))
-            {
-                throw new ArgumentException($"Extension {extension} not valid");
-            }
+            string extension = ImageValidator.ValidateAndGetExtension(request.File.FileName, _settings.AllowedDocumentExtensions);
 
             string savedPath = string.Empty;
             try
@@ -61,17 +55,7 @@ namespace Store.Application.Features.Products.Commands.UpdateProductImage
                 savedPath = await _fileStorageService.SaveAsync(
                     request.File.Content, request.File.FileName, "products/images");
 
-                Image image = new()
-                {
-                    Extension = extension,
-                    FileName = request.File.FileName,
-                    OriginalFileName = request.File.FileName,
-                    Path = savedPath,
-                    Size = request.File.Size,
-                    Product = product
-                };
-
-                product.AddImage(image);
+                product.AddImage(request.File.FileName, extension, savedPath, request.File.Size);
             }
             catch
             {

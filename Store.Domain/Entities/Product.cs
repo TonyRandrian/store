@@ -93,6 +93,21 @@
             Images.Add(image);
         }
 
+        public void AddImage(string fileName, string extension, string path, long size)
+        {
+            Image image = new()
+            {
+                Extension = extension,
+                FileName = fileName,
+                OriginalFileName = fileName,
+                Path = path,
+                Size = size,
+                Product = this
+            };
+
+            Images.Add(image);
+        }
+
         public void RemoveImage(Image image)
         {
             Images.Remove(image);

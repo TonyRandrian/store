@@ -6,6 +6,7 @@ using Store.Application.Interfaces.Repositories;
 using Store.Application.Interfaces.Services;
 using Store.Application.Settings;
 using Store.Domain.Entities;
+using Store.Domain.Validators;
 
 namespace Store.Application.Features.Products.Commands.AddProductImage
 {
@@ -29,16 +30,11 @@ namespace Store.Application.Features.Products.Commands.AddProductImage
             List<(CreateProductFile File, string Extension)> validatedFiles = [];
             foreach (CreateProductFile file in request.Uploads)
             {
-                string extension = Path.GetExtension(file.FileName).TrimStart('.').ToLowerInvariant();
-
-                if (!_settings.AllowedImageExtensions.Contains(extension))
-                {
-                    throw new ArgumentException($"Extension {extension} not valid");
-                }
-
+                string extension = ImageValidator.ValidateAndGetExtension(file.FileName, _settings.AllowedImageExtensions);
                 validatedFiles.Add((file, extension));
             }
 
+            // creation & attribution
             List<string> savedPaths = [];
             try
             {
@@ -48,18 +44,7 @@ namespace Store.Application.Features.Products.Commands.AddProductImage
                         file.Content, file.FileName, "products/images");
 
                     savedPaths.Add(savedPath);
-
-                    Image image = new()
-                    {
-                        Extension = extension,
-                        FileName = file.FileName,
-                        OriginalFileName = file.FileName,
-                        Path = savedPath,
-                        Size = file.Size,
-                        Product = product
-                    };
-
-                    product.AddImage(image);
+                    product.AddImage(file.FileName, extension, savedPath, file.Size);
                 }
             } 
             catch 
@@ -72,8 +57,8 @@ namespace Store.Application.Features.Products.Commands.AddProductImage
                 throw;
             }
 
+            // persistence
             product = await _productRepository.UpdateAsync(product);
-
             return new ProductResponse(product);
         }
     }
