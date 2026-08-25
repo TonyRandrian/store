@@ -23,14 +23,7 @@ namespace Store.Application.Features.Products.Commands.CreateProduct
                 ?? throw new KeyNotFoundException($"No category with the id {request.CategoryId} found");
 
             // creation
-            List<Supplier> suppliers = [];
-            foreach (Guid id in request.SuppliersIds)
-            {
-                Supplier? supplier = await _supplierRepository.GetByIdAsync(id)
-                    ?? throw new KeyNotFoundException($"No supplier with the id {id} found");
-
-                suppliers.Add(supplier);
-            }
+            List<Supplier> suppliers = await _supplierRepository.GetByIdsAsync(request.SuppliersIds);
 
             Product product = new(request.Name, request.Price, category, suppliers);
 

@@ -16,6 +16,8 @@ namespace Store.Infrastructure.Repositories
             int totalRecords = await _context.Suppliers.CountAsync();
             List<Supplier> suppliers = await _context.Suppliers
                 .Include(s => s.Products)
+                .ThenInclude(p => p.Images)
+                .Include(s => s.Products)
                 .ThenInclude(p => p.Category)
                 .AsNoTracking()
                 .Skip((pageNum - 1) * pageSize)
@@ -34,6 +36,8 @@ namespace Store.Infrastructure.Repositories
         public async Task<Supplier?> GetByIdAsync(Guid id)
         {
             return await _context.Suppliers
+                .Include(s => s.Products)
+                .ThenInclude(p => p.Images)
                 .Include(s => s.Products)
                 .ThenInclude(p => p.Category)
                 .FirstOrDefaultAsync(s => s.Id == id);
@@ -82,6 +86,14 @@ namespace Store.Infrastructure.Repositories
                 TotalRecords = totalRecords,
                 Data = products
             };
+        }
+
+        public async Task<List<Supplier>> GetByIdsAsync(List<Guid> suppliersIds)
+        {
+            return await _context.Suppliers
+                .Include(s => s.Products)
+                .Where(s => suppliersIds.Contains(s.Id))
+                .ToListAsync();
         }
     }
 }
