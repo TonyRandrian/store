@@ -1,6 +1,6 @@
 ﻿namespace Store.Domain.Validators
 {
-    public class ImageValidator
+    public class FileValidator
     {
 
         public static string ValidateAndGetExtension(string fileName, IEnumerable<string> allowedExtensions)

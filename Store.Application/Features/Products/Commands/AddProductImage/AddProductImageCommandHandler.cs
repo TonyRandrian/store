@@ -30,7 +30,7 @@ namespace Store.Application.Features.Products.Commands.AddProductImage
             List<(CreateProductFile File, string Extension)> validatedFiles = [];
             foreach (CreateProductFile file in request.Uploads)
             {
-                string extension = ImageValidator.ValidateAndGetExtension(file.FileName, _settings.AllowedImageExtensions);
+                string extension = FileValidator.ValidateAndGetExtension(file.FileName, _settings.AllowedImageExtensions);
                 validatedFiles.Add((file, extension));
             }
 
@@ -41,7 +41,7 @@ namespace Store.Application.Features.Products.Commands.AddProductImage
                 foreach ((CreateProductFile file, string extension) in validatedFiles)
                 {
                     string savedPath = await _fileStorageService.SaveAsync(
-                        file.Content, file.FileName, "products/images");
+                        file.Content, file.FileName, _settings.ProductImageFolder);
 
                     savedPaths.Add(savedPath);
                     product.AddImage(file.FileName, extension, savedPath, file.Size);

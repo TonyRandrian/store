@@ -1,19 +1,21 @@
 ﻿using MediatR;
+using Microsoft.Extensions.Options;
 using Store.Application.Interfaces.Repositories;
 using Store.Application.Interfaces.Services;
+using Store.Application.Settings;
 using Store.Domain.Entities;
 
 namespace Store.Application.Features.Products.Commands.DeleteProductImage
 {
     public class DeleteProductImageCommandHandler(
         IProductRepository productRepository,
-        IImageRepository imageRepository,
-        IFileStorageService fileStorageService)
+        IFileStorageService fileStorageService,
+        IOptions<FileStorageSettings> settings)
         : IRequestHandler<DeleteProductImageCommand>
     {
         private readonly IProductRepository _productRepository = productRepository;
-        private readonly IImageRepository _imageRepository = imageRepository;
         private readonly IFileStorageService _fileStorageService = fileStorageService;
+        private readonly FileStorageSettings _settings = settings.Value;
 
 
         public async Task Handle(DeleteProductImageCommand request, CancellationToken cancellationToken)
@@ -45,7 +47,7 @@ namespace Store.Application.Features.Products.Commands.DeleteProductImage
 
             // remove from storage
             await _fileStorageService.DeleteAsync(
-                Path.Combine("uploads", "products/Images", imageFound.FileName).Replace("\\", "/"));
+                Path.Combine(_settings.UploadDir, _settings.ProductImageFolder, imageFound.FileName).Replace("\\", "/"));
         }
     }
 }

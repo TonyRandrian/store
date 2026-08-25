@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using Store.Application.DTOs.Files;
 using Store.Application.DTOs.Products;
 using Store.Application.Interfaces.Repositories;
 using Store.Application.Interfaces.Services;
@@ -12,13 +11,11 @@ namespace Store.Application.Features.Products.Commands.UpdateProductImage
 {
     public class UpdateProductImageCommandHandler(
         IProductRepository productRepository,
-        IImageRepository imageRepository,
         IFileStorageService fileStorageService,
         IOptions<FileStorageSettings> settings)
         : IRequestHandler<UpdateProductImageCommand, ProductResponse>
     {
         private readonly IProductRepository _productRepository = productRepository;
-        private readonly IImageRepository _imageRepository = imageRepository;
         private readonly IFileStorageService _fileStorageService = fileStorageService;
         private readonly FileStorageSettings _settings = settings.Value;
 
@@ -47,13 +44,13 @@ namespace Store.Application.Features.Products.Commands.UpdateProductImage
             // set null in te file table to remove the link between product-file
             product.RemoveImage(imageFound);
 
-            string extension = ImageValidator.ValidateAndGetExtension(request.File.FileName, _settings.AllowedImageExtensions);
+            string extension = FileValidator.ValidateAndGetExtension(request.File.FileName, _settings.AllowedImageExtensions);
 
             string savedPath = string.Empty;
             try
             {
                 savedPath = await _fileStorageService.SaveAsync(
-                    request.File.Content, request.File.FileName, "products/images");
+                    request.File.Content, request.File.FileName, _settings.ProductImageFolder);
 
                 product.AddImage(request.File.FileName, extension, savedPath, request.File.Size);
             }
