@@ -17,7 +17,7 @@ namespace Store.Application.Features.Products.Commands.DeleteProductImage
         private readonly IFileStorageService _fileStorageService = fileStorageService;
         private readonly FileStorageSettings _settings = settings.Value;
 
-
+         
         public async Task Handle(DeleteProductImageCommand request, CancellationToken cancellationToken)
         {
             Product? product = await _productRepository.GetByIdAsync(request.ProductId)
