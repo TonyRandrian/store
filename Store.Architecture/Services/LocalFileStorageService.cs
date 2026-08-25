@@ -13,6 +13,7 @@ namespace Store.Infrastructure.Services
         private readonly string _webRootPath = env.WebRootPath;
         private readonly FileStorageSettings _settings = settings.Value;
 
+
         public Task DeleteAsync(string path)
         {
             string fullPath = Path.Combine(_webRootPath, path);
