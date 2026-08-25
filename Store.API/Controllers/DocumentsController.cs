@@ -23,6 +23,7 @@ namespace Store.API.Controllers
             [FromQuery] int pageSize)
         {
             PagedResult<DocumentResponse> responses = await _mediator.Send(new GetDocumentsQuery(pageNum, pageSize));
+
             return Ok(ApiResponse<PagedResult<DocumentResponse>>.Ok(200, responses, "Documents retrieve"));
         }
     }

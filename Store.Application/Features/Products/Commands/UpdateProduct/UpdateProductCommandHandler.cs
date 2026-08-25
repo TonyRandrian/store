@@ -25,30 +25,28 @@ namespace Store.Application.Features.Products.Commands.UpdateProduct
             Category? category = await _categoryRepository.GetByIdAsync(request.CategoryId)
                 ?? throw new KeyNotFoundException($"No category with the id {request.CategoryId} found");
 
+            HashSet<Guid> requestedSupplierIds = [.. request.SuppliersIds];
+
             // update
             product.Name = request.Name;
             product.Price = request.Price;
             product.Category = category;
 
             /// remove the supplier that are not in the request list
-            List<Supplier> suppliersToRemove = [.. product.Suppliers.Where(supplier => !request.SuppliersIds.Contains(supplier.Id))];
+            List<Supplier> suppliersToRemove = [.. product.Suppliers.Where(supplier => !requestedSupplierIds.Contains(supplier.Id))];
             foreach (Supplier supplier in suppliersToRemove)
             {
                 product.Suppliers.Remove(supplier);
             }
 
             /// add the suppliers that are not in the suppliers list yet
-            List<Guid> existingSuppliersIds = [.. product.Suppliers.Select(p => p.Id)];
-            foreach (Guid sid in request.SuppliersIds)
-            {
-                if (!existingSuppliersIds.Contains(sid))
-                {
-                    /// better use GetBy using batch later 
-                    Supplier? supplier = await _supplierRepository.GetByIdAsync(sid)
-                        ?? throw new KeyNotFoundException($"No supplier with the id {sid} found");
+            HashSet<Guid> existingSuppliersIds = [.. product.Suppliers.Select(p => p.Id)];
+            List<Guid> notExistingSuppliersIds = [.. requestedSupplierIds.Except(existingSuppliersIds)];
 
-                    product.Suppliers.Add(supplier);
-                }
+            List<Supplier> suppliers = await _supplierRepository.GetByIdsAsync(notExistingSuppliersIds);
+            foreach (Supplier supplier in suppliers)
+            {
+                product.Suppliers.Add(supplier);
             }
 
             // persistence

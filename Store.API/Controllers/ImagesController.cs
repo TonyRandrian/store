@@ -23,6 +23,7 @@ namespace Store.API.Controllers
             [FromQuery] int pageSize)
         {
             PagedResult<ImageResponse> responses = await _mediator.Send(new GetImagesQuery(pageNum, pageSize));
+
             return Ok(ApiResponse<PagedResult<ImageResponse>>.Ok(200, responses, "Images retrieved"));
         }
     }

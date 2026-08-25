@@ -6,15 +6,17 @@ using Store.Infrastructure.Persistence;
 
 namespace Store.Infrastructure.Repositories
 {
-    public class SupplierRepository(StoreDbContext store) : ISupplierRepository
+    public class SupplierRepository(StoreDbContext context) : ISupplierRepository
     {
-        private readonly StoreDbContext Context = store;
+        private readonly StoreDbContext _context = context;
 
 
         public async Task<PagedResult<Supplier>> GetAllAsync(int pageNum, int pageSize)
         {
-            int totalRecords = await Context.Suppliers.CountAsync();
-            List<Supplier> suppliers = await Context.Suppliers
+            int totalRecords = await _context.Suppliers.CountAsync();
+            List<Supplier> suppliers = await _context.Suppliers
+                .Include(s => s.Products)
+                .ThenInclude(p => p.Images)
                 .Include(s => s.Products)
                 .ThenInclude(p => p.Category)
                 .AsNoTracking()
@@ -33,7 +35,9 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Supplier?> GetByIdAsync(Guid id)
         {
-            return await Context.Suppliers
+            return await _context.Suppliers
+                .Include(s => s.Products)
+                .ThenInclude(p => p.Images)
                 .Include(s => s.Products)
                 .ThenInclude(p => p.Category)
                 .FirstOrDefaultAsync(s => s.Id == id);
@@ -41,16 +45,16 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Supplier> AddAsync(Supplier supplier)
         {
-            await Context.Suppliers.AddAsync(supplier);
-            await Context.SaveChangesAsync();
+            await _context.Suppliers.AddAsync(supplier);
+            await _context.SaveChangesAsync();
 
             return supplier;
         }
 
         public async Task<Supplier> UpdateAsync(Supplier supplier)
         {
-            Context.Suppliers.Update(supplier);
-            await Context.SaveChangesAsync();
+            _context.Suppliers.Update(supplier);
+            await _context.SaveChangesAsync();
 
             return supplier;
         }
@@ -60,13 +64,13 @@ namespace Store.Infrastructure.Repositories
             Supplier? supplier = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No supplier with the id {id} found");
 
-            Context.Suppliers.Remove(supplier);
-            await Context.SaveChangesAsync();
+            _context.Suppliers.Remove(supplier);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<PagedResult<Product>> GetSupplierProducts(Guid supplierId, int pageNum, int pageSize)
         {
-            IQueryable<Product> query = Context.Suppliers
+            IQueryable<Product> query = _context.Suppliers
                 .Where(s => s.Id == supplierId)
                 .SelectMany(s => s.Products);
 
@@ -82,6 +86,14 @@ namespace Store.Infrastructure.Repositories
                 TotalRecords = totalRecords,
                 Data = products
             };
+        }
+
+        public async Task<List<Supplier>> GetByIdsAsync(List<Guid> suppliersIds)
+        {
+            return await _context.Suppliers
+                .Include(s => s.Products)
+                .Where(s => suppliersIds.Contains(s.Id))
+                .ToListAsync();
         }
     }
 }

@@ -25,13 +25,6 @@ namespace Store.Infrastructure.Persistence
                 .HasOne(p => p.Document)
                 .WithOne(d => d.Product)
                 .HasForeignKey<Document>(d => d.ProductId);
-
-            /*modelBuilder.Entity<Image>()
-                .HasOne(i => i.Product)
-                .WithMany(p => p.Images)
-                .HasForeignKey(i => i.Product)
-                .IsRequired(false)
-                .OnDelete(DeleteBehavior.SetNull);*/
         }
     }
 }

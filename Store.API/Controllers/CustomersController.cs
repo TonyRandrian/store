@@ -26,21 +26,16 @@ namespace Store.API.Controllers
         public async Task<ActionResult<ApiResponse<CustomerResponse>>> Create(CreateCustomerRequest request)
         {
             CustomerResponse response = await _mediator.Send(new CreateCustomerCommand(request.Name));
+
             return Ok(ApiResponse<CustomerResponse>.Ok(201, response, "Customer Created"));
         }
 
         [HttpGet("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<CustomerResponse>>> GetCustomer([FromRoute] Guid id)
         {
-            try
-            {
-                CustomerResponse? response = await _mediator.Send(new GetCustomerQuery(id));
-                return Ok(ApiResponse<CustomerResponse>.Ok(200, response, "Customer retrieved"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<CustomerResponse>.Error(404, knf.Message));
-            }
+            CustomerResponse response = await _mediator.Send(new GetCustomerQuery(id));
+
+            return Ok(ApiResponse<CustomerResponse>.Ok(200, response, "Customer retrieved"));
         }
 
         [HttpGet]
@@ -49,21 +44,16 @@ namespace Store.API.Controllers
             [FromQuery] int pageSize)
         {
             PagedResult<CustomerResponse> responses = await _mediator.Send(new GetCustomersQuery(pageNum, pageSize));
+
             return Ok(ApiResponse<PagedResult<CustomerResponse>>.Ok(200, responses, "Customers retrieved"));
         }
 
         [HttpDelete("{id:Guid}")]
         public async Task<ActionResult<ApiResponse<object>>> Delete([FromRoute] Guid id)
         {
-            try
-            {
-                await _mediator.Send(new DeleteCustomerCommand(id));
-                return Ok(ApiResponse<object>.Ok(204, null, "Customer deleted"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<CustomerResponse>.Error(404, knf.Message));
-            }
+            await _mediator.Send(new DeleteCustomerCommand(id));
+
+            return Ok(ApiResponse<object>.Ok(204, null, "Customer deleted"));
         }
 
         [HttpPut("{id:Guid}")]
@@ -71,20 +61,10 @@ namespace Store.API.Controllers
             [FromRoute] Guid id,
             [FromBody] UpdateCustomerRequest request)
         {
-            try
-            {
-                CustomerResponse response = await _mediator.Send(new UpdateCustomerCommand(
-                    id, request.Name));
-                return Ok(ApiResponse<CustomerResponse>.Ok(201, response, "Customer Updated"));
-            }
-            catch (KeyNotFoundException knf)
-            {
-                return NotFound(ApiResponse<CustomerResponse>.Error(404, knf.Message));
-            }
-            catch (InvalidOperationException ioe)
-            {
-                return BadRequest(ApiResponse<CustomerResponse>.Error(400, ioe.Message));
-            }
+            CustomerResponse response = await _mediator.Send(new UpdateCustomerCommand(
+                id, request.Name));
+
+            return Ok(ApiResponse<CustomerResponse>.Ok(201, response, "Customer Updated"));
         }
     }
 }

@@ -11,5 +11,6 @@ namespace Store.Application.Interfaces.Repositories
         public Task<Supplier> UpdateAsync(Supplier supplier);
         public Task DeleteAsync(Guid id);
         public Task<PagedResult<Product>> GetSupplierProducts(Guid supplierId, int pageNum, int pageSize);
+        public Task<List<Supplier>> GetByIdsAsync(List<Guid> suppliersIds);
     }
 }

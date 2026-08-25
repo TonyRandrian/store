@@ -8,14 +8,14 @@ namespace Store.Infrastructure.Repositories
 {
     public class CategoryRepository(StoreDbContext context) : ICategoryRepository
     {
-        private readonly StoreDbContext Context = context;
+        private readonly StoreDbContext _context = context;
 
 
         public async Task<PagedResult<Category>> GetAllAsync(int pageNumber, int pageSize)
         {
-            int totalRecords = await Context.Categories.CountAsync();
+            int totalRecords = await _context.Categories.CountAsync();
 
-            List<Category> data = await Context.Categories
+            List<Category> data = await _context.Categories
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.Products)
@@ -36,7 +36,7 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Category?> GetByIdAsync(Guid id)
         {
-            return await Context.Categories
+            return await _context.Categories
                 .Include(c => c.Parent)
                 .Include(c => c.Children)
                 .Include(c => c.Products)
@@ -45,16 +45,16 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<Category> AddAsync(Category category)
         {
-            await Context.Categories.AddAsync(category);
-            await Context.SaveChangesAsync();
+            await _context.Categories.AddAsync(category);
+            await _context.SaveChangesAsync();
 
             return category;
         }
 
         public async Task<Category> UpdateAsync(Category category)
         {
-            Context.Categories.Update(category);
-            await Context.SaveChangesAsync();
+            _context.Categories.Update(category);
+            await _context.SaveChangesAsync();
 
             return category;
         }
@@ -64,26 +64,26 @@ namespace Store.Infrastructure.Repositories
             Category? category = await GetByIdAsync(id)
                 ?? throw new KeyNotFoundException($"No category with the id {id} found");
 
-            Context.Categories.Remove(category);
-            await Context.SaveChangesAsync();
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> IsUsed(Guid id)
         {
-            bool hasChildren = await Context.Categories.AnyAsync(c => c.Parent != null && c.Parent.Id == id);
+            bool hasChildren = await _context.Categories.AnyAsync(c => c.Parent != null && c.Parent.Id == id);
             if (hasChildren) return true;
 
-            return await Context.Products.AnyAsync(p => p.Category != null && p.Category.Id == id);
+            return await _context.Products.AnyAsync(p => p.Category != null && p.Category.Id == id);
         }
 
         public async Task<bool> Exists(Guid id)
         {
-            return await Context.Categories.AnyAsync(c => c.Id == id);
+            return await _context.Categories.AnyAsync(c => c.Id == id);
         }
 
         public async Task<PagedResult<Product>> GetCategoryProducts(Guid categoryId, int pageNumber, int pageSize)
         {
-            IQueryable<Product> query = Context.Products.Where(p => p.Category.Id == categoryId);
+            IQueryable<Product> query = _context.Products.Where(p => p.Category.Id == categoryId);
 
             int totalRecords = await query.CountAsync();
             List<Product> products = await query
@@ -105,7 +105,7 @@ namespace Store.Infrastructure.Repositories
 
         public async Task<PagedResult<Category>?> GetCategoryChildren(Guid categoryId, int pageNum, int pageSize)
         {
-            IQueryable<Category> query = Context.Categories
+            IQueryable<Category> query = _context.Categories
                 .Where(c => c.Id == categoryId)
                 .SelectMany(c => c.Children)
                 .Include(c => c.Parent)

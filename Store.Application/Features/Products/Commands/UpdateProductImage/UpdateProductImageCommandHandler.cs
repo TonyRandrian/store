@@ -1,23 +1,21 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Options;
-using Store.Application.DTOs.Files;
 using Store.Application.DTOs.Products;
 using Store.Application.Interfaces.Repositories;
 using Store.Application.Interfaces.Services;
 using Store.Application.Settings;
 using Store.Domain.Entities;
+using Store.Domain.Validators;
 
 namespace Store.Application.Features.Products.Commands.UpdateProductImage
 {
     public class UpdateProductImageCommandHandler(
         IProductRepository productRepository,
-        IImageRepository imageRepository,
         IFileStorageService fileStorageService,
         IOptions<FileStorageSettings> settings)
         : IRequestHandler<UpdateProductImageCommand, ProductResponse>
     {
         private readonly IProductRepository _productRepository = productRepository;
-        private readonly IImageRepository _imageRepository = imageRepository;
         private readonly IFileStorageService _fileStorageService = fileStorageService;
         private readonly FileStorageSettings _settings = settings.Value;
 
@@ -46,32 +44,15 @@ namespace Store.Application.Features.Products.Commands.UpdateProductImage
             // set null in te file table to remove the link between product-file
             product.RemoveImage(imageFound);
 
-            string extension = Path.GetExtension(request.File.FileName)
-                                .TrimStart('.')
-                                .ToLowerInvariant();
-
-            if (!_settings.AllowedImageExtensions.Contains(extension))
-            {
-                throw new ArgumentException($"Extension {extension} not valid");
-            }
+            string extension = FileValidator.ValidateAndGetExtension(request.File.FileName, _settings.AllowedImageExtensions);
 
             string savedPath = string.Empty;
             try
             {
                 savedPath = await _fileStorageService.SaveAsync(
-                    request.File.Content, request.File.FileName, "products/images");
+                    request.File.Content, request.File.FileName, _settings.ProductImageFolder);
 
-                Image image = new()
-                {
-                    Extension = extension,
-                    FileName = request.File.FileName,
-                    OriginalFileName = request.File.FileName,
-                    Path = savedPath,
-                    Size = request.File.Size,
-                    Product = product
-                };
-
-                product.AddImage(image);
+                product.AddImage(request.File.FileName, extension, savedPath, request.File.Size);
             }
             catch
             {

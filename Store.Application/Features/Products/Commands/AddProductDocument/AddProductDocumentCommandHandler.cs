@@ -5,6 +5,7 @@ using Store.Application.Interfaces.Repositories;
 using Store.Application.Interfaces.Services;
 using Store.Application.Settings;
 using Store.Domain.Entities;
+using Store.Domain.Validators;
 
 namespace Store.Application.Features.Products.Commands.AddProductDocument
 {
@@ -24,18 +25,14 @@ namespace Store.Application.Features.Products.Commands.AddProductDocument
             Product product = await _productRepository.GetByIdAsync(request.ProductId)
                 ?? throw new KeyNotFoundException($"No product with the id {request.ProductId} found");
 
-            string extension = Path.GetExtension(request.File.FileName).TrimStart('.').ToLowerInvariant();
-
-            if (!_settings.AllowedDocumentExtensions.Contains(extension))
-            {
-                throw new ArgumentException($"Extension {extension} not valid");
-            }
+            string extension = FileValidator.ValidateAndGetExtension(request.File.FileName,
+                _settings.AllowedDocumentExtensions);
 
             string savedPath = string.Empty;
             try
             {
                 savedPath = await _fileStorageService.SaveAsync(
-                request.File.Content, request.File.FileName, "products/docs");
+                request.File.Content, request.File.FileName, _settings.ProductDocumentFolder);
 
                 Document doc = new()
                 {
