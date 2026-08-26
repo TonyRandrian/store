@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 using System.Text.Json;
 using Store.API.Commons;
 
@@ -24,6 +25,22 @@ namespace Store.API.Middlewares
 
         private async Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
+            if (ex is FluentValidation.ValidationException validationEx)
+            {
+                var errors = validationEx.Errors
+                    .Select(e => e.ErrorMessage );
+
+                var validationResponse = ApiResponse<object>.Error(
+                    (int)HttpStatusCode.BadRequest,
+                    "Validation failed",
+                    errors);
+
+                context.Response.ContentType = "application/json";
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                await context.Response.WriteAsync(JsonSerializer.Serialize(validationResponse));
+                return;
+            }
+
             var (statusCode, message) = ex switch
             {
                 KeyNotFoundException => (HttpStatusCode.NotFound, ex.Message),
