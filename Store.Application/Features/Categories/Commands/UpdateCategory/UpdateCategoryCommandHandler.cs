@@ -14,20 +14,12 @@ namespace Store.Application.Features.Categories.Commands.UpdateCategory
         public async Task<CategoryResponse> Handle(UpdateCategoryCommand request, CancellationToken cancellationToken)
         {
             // validation
-            Category? category = await _categoryRepository.GetByIdAsync(request.Id)
-                ?? throw new KeyNotFoundException($"No category with the id {request.Id} found");
+            Category category = await _categoryRepository.GetByIdAsync(request.Id)
+                ?? throw new InvalidOperationException("Category not found despite passing validation");
 
-            Category? categoryParent = request.ParentCategoryId == null ? null :
-                await _categoryRepository.GetByIdAsync(request.ParentCategoryId.Value);
-
-            if (categoryParent != null && categoryParent.Id == request.Id)
-            {
-                throw new InvalidOperationException("Cannot be a parent of itself");
-            }
-            else if (request.ParentCategoryId != null && categoryParent == null)
-            {
-                throw new KeyNotFoundException($"No category with the id {request.ParentCategoryId} found");
-            }
+            Category? categoryParent = request.ParentCategoryId.HasValue
+                ? await _categoryRepository.GetByIdAsync(request.ParentCategoryId.Value)
+                : null;
 
             // update
             category.Name = request.Name;

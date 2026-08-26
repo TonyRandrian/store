@@ -13,18 +13,8 @@ namespace Store.Application.Features.Categories.Commands.CreateCategory
 
         public async Task<CategoryResponse> Handle(CreateCategoryCommand request, CancellationToken cancellationToken)
         {
-            Category? categoryParent = null;
-            if (request.ParentCategoryId != null)
-            {
-                Guid id = request.ParentCategoryId.Value;
-
-                if (!await _categoryRepository.Exists(id))
-                {
-                    throw new KeyNotFoundException($"No category with id {id} found, cannot create parent");
-                }
-
-                categoryParent = await _categoryRepository.GetByIdAsync(id);
-            }
+            Category? categoryParent = request.ParentCategoryId.HasValue
+                ? await _categoryRepository.GetByIdAsync(request.ParentCategoryId.Value) : null;
 
             Category category = new(request.Name, categoryParent);
             await _categoryRepository.AddAsync(category);
