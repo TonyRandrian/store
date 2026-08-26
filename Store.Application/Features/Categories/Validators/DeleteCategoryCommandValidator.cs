@@ -15,7 +15,9 @@ namespace Store.Application.Features.Categories.Validators
 
             RuleFor(c => c.Id)
                 .MustAsync((id, cancellationToken) => _categoryRepository.Exists(id))
-                .WithMessage(c => $"No category with the id {c.Id} found");
+                    .WithMessage(c => $"No category with the id {c.Id} found")
+                .MustAsync((id, cancellationToken) => _categoryRepository.IsUsed(id))
+                    .WithMessage("Other Category or Product still use this category, cannot delete");
         }
     }
 }
