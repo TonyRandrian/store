@@ -23,10 +23,14 @@ namespace Store.Application.Commons
 
             ValidationContext<TRequest> context = new(request);
 
-            ValidationResult[] results = await Task.WhenAll(
-                _validators.Select(v => v.ValidateAsync(context, cancellationToken)));
+            var validationResults = new List<ValidationResult>();
+            foreach (var validator in _validators)
+            {
+                var result = await validator.ValidateAsync(context, cancellationToken);
+                validationResults.Add(result);
+            }
 
-            List<ValidationFailure> failures = [.. results
+            List<ValidationFailure> failures = [.. validationResults
                 .SelectMany(r => r.Errors)
                 .Where(f => f != null)];
 
