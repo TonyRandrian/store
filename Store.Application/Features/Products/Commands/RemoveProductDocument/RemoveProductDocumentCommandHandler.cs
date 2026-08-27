@@ -12,10 +12,9 @@ namespace Store.Application.Features.Products.Commands.RemoveProductDocument
 
         public async Task Handle(RemoveProductDocumentCommand request, CancellationToken cancellationToken)
         {
-            Product product = await _productRepository.GetByIdAsync(request.ProductId)
-                ?? throw new KeyNotFoundException($"No product with the id {request.ProductId} found");
+            Product? product = await _productRepository.GetByIdAsync(request.ProductId);
 
-            product.Document = null;
+            product!.Document = null;
             await _productRepository.UpdateAsync(product);
         }
     }

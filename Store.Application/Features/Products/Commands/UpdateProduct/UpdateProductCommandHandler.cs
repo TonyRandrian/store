@@ -19,18 +19,14 @@ namespace Store.Application.Features.Products.Commands.UpdateProduct
         public async Task<ProductResponse> Handle(UpdateProductCommand request, CancellationToken cancellationToken)
         {
             // validation
-            Product? product = await _productRepository.GetByIdAsync(request.Id)
-                ?? throw new KeyNotFoundException($"No product with the id {request.Id} found");
-
-            Category? category = await _categoryRepository.GetByIdAsync(request.CategoryId)
-                ?? throw new KeyNotFoundException($"No category with the id {request.CategoryId} found");
-
+            Product? product = await _productRepository.GetByIdAsync(request.Id);
+            Category? category = await _categoryRepository.GetByIdAsync(request.CategoryId);
             HashSet<Guid> requestedSupplierIds = [.. request.SuppliersIds];
 
             // update
-            product.Name = request.Name;
+            product!.Name = request.Name;
             product.Price = request.Price;
-            product.Category = category;
+            product.Category = category!;
 
             /// remove the supplier that are not in the request list
             List<Supplier> suppliersToRemove = [.. product.Suppliers.Where(supplier => !requestedSupplierIds.Contains(supplier.Id))];
