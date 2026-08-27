@@ -16,16 +16,12 @@ namespace Store.Application.Features.Invoices.Commands.UpdateInvoice
 
         public async Task<InvoiceResponse> Handle(UpdateInvoiceCommand request, CancellationToken cancellationToken)
         {
-            // validation
-            Invoice invoice = await _invoiceRepository.GetByIdAsync(request.Id)
-                ?? throw new KeyNotFoundException($"No invoice with the id {request.Id} found");
-
-            Customer? customer = await _customerRepository.GetByIdAsync(request.CustomerId)
-                ?? throw new KeyNotFoundException($"No customer with the id {request.CustomerId} found");
+            Invoice? invoice = await _invoiceRepository.GetByIdAsync(request.Id);
+            Customer? customer = await _customerRepository.GetByIdAsync(request.CustomerId);
 
             // update
-            invoice.Reference = request.Reference;
-            invoice.Customer = customer;
+            invoice!.Reference = request.Reference;
+            invoice.Customer = customer!;
             invoice.Total = request.Total;
 
             // persistence
