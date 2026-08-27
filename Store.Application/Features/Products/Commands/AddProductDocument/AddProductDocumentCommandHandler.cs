@@ -22,9 +22,7 @@ namespace Store.Application.Features.Products.Commands.AddProductDocument
 
         public async Task<ProductResponse> Handle(AddProductDocumentCommand request, CancellationToken cancellationToken)
         {
-            Product product = await _productRepository.GetByIdAsync(request.ProductId)
-                ?? throw new KeyNotFoundException($"No product with the id {request.ProductId} found");
-
+            Product? product = await _productRepository.GetByIdAsync(request.ProductId);
             string extension = FileValidator.ValidateAndGetExtension(request.File.FileName,
                 _settings.AllowedDocumentExtensions);
 
@@ -44,7 +42,7 @@ namespace Store.Application.Features.Products.Commands.AddProductDocument
                     Product = product
                 };
 
-                product.Document = doc;
+                product!.Document = doc;
             }
             catch
             {
