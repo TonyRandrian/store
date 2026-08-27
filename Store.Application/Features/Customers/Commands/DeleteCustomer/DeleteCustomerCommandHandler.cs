@@ -11,11 +11,6 @@ namespace Store.Application.Features.Customers.Commands.DeleteCustomer
 
         public async Task Handle(DeleteCustomerCommand request, CancellationToken cancellationToken)
         {
-            if (await _customerRepository.IsUsed(request.Id))
-            {
-                throw new InvalidOperationException("This customer is attributed to invoices, cannot delete");
-            }
-
             await _customerRepository.DeleteAsync(request.Id);
         }
     }

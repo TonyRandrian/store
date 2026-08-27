@@ -4,8 +4,7 @@ using Store.Application.Interfaces.Repositories;
 
 namespace Store.Application.Features.Categories.Validators
 {
-    public class CreateCategoryCommandValidator
-        : AbstractValidator<CreateCategoryCommand>
+    public class CreateCategoryCommandValidator : AbstractValidator<CreateCategoryCommand>
     {
         private readonly ICategoryRepository _categoryRepository;
 
