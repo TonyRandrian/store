@@ -18,13 +18,10 @@ namespace Store.Application.Features.Products.Commands.CreateProduct
 
         public async Task<ProductResponse> Handle(CreateProductCommand request, CancellationToken cancellationToken)
         {
-            // validation
-            Category? category = await _categoryRepository.GetByIdAsync(request.CategoryId)
-                ?? throw new KeyNotFoundException($"No category with the id {request.CategoryId} found");
+            Category? category = await _categoryRepository.GetByIdAsync(request.CategoryId);
 
             // creation
             List<Supplier> suppliers = await _supplierRepository.GetByIdsAsync(request.SuppliersIds);
-
             Product product = new(request.Name, request.Price, category, suppliers);
 
             // persistence

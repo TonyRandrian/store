@@ -17,8 +17,7 @@ namespace Store.Application.Features.Invoices.Commands.CreateInvoice
         public async Task<InvoiceResponse> Handle(CreateInvoiceCommand request, CancellationToken cancellationToken)
         {
             Customer? customer = await _customerRepository.GetByIdAsync(request.CustomerId)
-                ?? throw new KeyNotFoundException($"No customer with the id {request.CustomerId} found");
-
+                ?? throw new KeyNotFoundException($"No customer found with the id {request.CustomerId} despite passing validation");
             Invoice invoice = new(request.Reference, customer, request.Total);
 
             invoice = await _invoiceRepository.AddAsync(invoice);

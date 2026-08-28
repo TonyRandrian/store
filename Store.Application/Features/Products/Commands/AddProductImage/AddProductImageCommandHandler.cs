@@ -24,9 +24,7 @@ namespace Store.Application.Features.Products.Commands.AddProductImage
         public async Task<ProductResponse> Handle(AddProductImageCommand request, CancellationToken cancellationToken)
         {
             // validation
-            Product product = await _productRepository.GetByIdAsync(request.Id)
-                ?? throw new KeyNotFoundException($"No product with the id {request.Id} found");
-
+            Product? product = await _productRepository.GetByIdAsync(request.Id);
             List<(CreateProductFile File, string Extension)> validatedFiles = [];
             foreach (CreateProductFile file in request.Uploads)
             {
@@ -44,7 +42,7 @@ namespace Store.Application.Features.Products.Commands.AddProductImage
                         file.Content, file.FileName, _settings.ProductImageFolder);
 
                     savedPaths.Add(savedPath);
-                    product.AddImage(file.FileName, extension, savedPath, file.Size);
+                    product!.AddImage(file.FileName, extension, savedPath, file.Size);
                 }
             } 
             catch 

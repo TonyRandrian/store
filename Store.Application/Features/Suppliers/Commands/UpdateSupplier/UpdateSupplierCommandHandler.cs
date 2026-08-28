@@ -17,11 +17,9 @@ namespace Store.Application.Features.Suppliers.Commands.UpdateSupplier
         public async Task<SupplierResponse> Handle(UpdateSupplierCommand request, CancellationToken cancellationToken)
         {
             // validation
-            Supplier? supplier = await _supplierRepository.GetByIdAsync(request.Id)
-                ?? throw new Exception($"No supplier with the id {request.Id} found");
-
+            Supplier? supplier = await _supplierRepository.GetByIdAsync(request.Id);
             // udpate
-            supplier.Name = request.Name;
+            supplier!.Name = request.Name;
 
             /// remove products that are not present in the request list
             List<Product> productsToRemove = [.. supplier.Products.Where(product => !request.ProductsIds.Contains(product.Id))];

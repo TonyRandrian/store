@@ -18,13 +18,10 @@ namespace Store.Application.Features.InvoicesDetails.Commands.CreateInvoiceDetai
 
         public async Task<InvoiceDetailResponse> Handle(CreateInvoiceDetailCommand request, CancellationToken cancellationToken)
         {
-            Invoice? invoice = await _invoiceRepository.GetByIdAsync(request.InvoiceId)
-                ?? throw new KeyNotFoundException($"No invoice with the id {request.InvoiceId} found");
+            Invoice? invoice = await _invoiceRepository.GetByIdAsync(request.InvoiceId);
+            Product? product = await _productRepository.GetByIdAsync(request.ProductId);
 
-            Product? product = await _productRepository.GetByIdAsync(request.ProductId)
-                ?? throw new KeyNotFoundException($"No product with the id {request.ProductId} found");
-
-            InvoiceDetail invoiceDetail = new(invoice, product, request.Quantity);
+            InvoiceDetail invoiceDetail = new(invoice!, product!, request.Quantity);
             invoiceDetail = await _invoiceDetailRepository.AddAsync(invoiceDetail);
 
             return new InvoiceDetailResponse(invoiceDetail);

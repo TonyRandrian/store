@@ -23,11 +23,9 @@ namespace Store.Application.Features.Products.Commands.UpdateProductImage
         public async Task<ProductResponse> Handle(UpdateProductImageCommand request, CancellationToken cancellationToken)
         {
             // validation
-            Product product = await _productRepository.GetByIdAsync(request.ProductId)
-                ?? throw new KeyNotFoundException($"No product with the id {request.ProductId} found");
-
+            Product? product = await _productRepository.GetByIdAsync(request.ProductId);
             Image? imageFound = null;
-            foreach (Image image in product.Images)
+            foreach (Image image in product!.Images)
             {
                 if (image.Id == request.ImageId)
                 {

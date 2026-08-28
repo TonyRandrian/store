@@ -20,11 +20,9 @@ namespace Store.Application.Features.Products.Commands.DeleteProductImage
          
         public async Task Handle(DeleteProductImageCommand request, CancellationToken cancellationToken)
         {
-            Product? product = await _productRepository.GetByIdAsync(request.ProductId)
-                ?? throw new KeyNotFoundException($"No product with the id {request.ProductId} found");
-
+            Product? product = await _productRepository.GetByIdAsync(request.ProductId);
             Image? imageFound = null;
-            foreach (Image image in product.Images)
+            foreach (Image image in product!.Images)
             {
                 if (image.Id == request.ImageId)
                 {
