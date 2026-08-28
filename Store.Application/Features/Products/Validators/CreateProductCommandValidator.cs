@@ -18,6 +18,10 @@ namespace Store.Application.Features.Products.Validators
             RuleFor(p => p.CategoryId)
                 .MustAsync(async (id, cancellationToken) => await _categoryRepository.GetByIdAsync(id) != null)
                 .WithMessage(p => $"No category with the id {p.CategoryId} found");
+
+            RuleFor(p => p.Price)
+                .GreaterThanOrEqualTo(0)
+                .WithMessage("Price should be greater than or equal to 0");
         }
     }
 }

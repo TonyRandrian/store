@@ -18,7 +18,7 @@ namespace Store.Application.Features.Products.Validators
                 .MustAsync(async (id, cancellationToken) => await _productRepository.GetByIdAsync(id) != null)
                     .WithMessage(p => $"No product with the id {p.Id} found")
                 .MustAsync(async (id, cancellationToken) => !await _productRepository.IsUsed(id))
-                    .WithMessage("This product is used by one or many suppliers, cannot delete");
+                    .WithMessage("This product is used by one or many suppliers, cannot be deleted");
         }
     }
 }
