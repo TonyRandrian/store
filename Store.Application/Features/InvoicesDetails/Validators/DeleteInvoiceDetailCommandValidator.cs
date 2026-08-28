@@ -16,7 +16,7 @@ namespace Store.Application.Features.InvoicesDetails.Validators
 
             RuleFor(i => i.Id)
                 .MustAsync(async (id, cancellationToken) => await _invoiceDetailRepository.GetByIdAsync(id) != null)
-                .WithMessage(i => $"No invoice detail with the id {i.Id} found");
+                .WithMessage(i => $"No invoice detail with the id {i.Id} found ddd");
         }
     }
 }

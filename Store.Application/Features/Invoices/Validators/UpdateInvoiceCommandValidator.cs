@@ -24,7 +24,7 @@ namespace Store.Application.Features.Invoices.Validators
 
             RuleFor(i => i.CustomerId)
                 .MustAsync(async (id, cancellationToken) => await _customerRepository.GetByIdAsync(id) != null)
-                .WithMessage(i => $"No invoice with the id {i.CustomerId} found");
+                .WithMessage(i => $"No customer with the id {i.CustomerId} found");
         }
     }
 }

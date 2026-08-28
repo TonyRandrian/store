@@ -24,7 +24,7 @@ namespace Store.Application.Features.Categories.Validators
             RuleFor(c => c.ParentCategoryId)
                 .MustAsync((parentId, cancellationToken) => _categoryRepository.Exists(parentId!.Value))
                     .WithMessage(c => $"No category with the id {c.ParentCategoryId} found")
-                .Must((commad, parentId) => parentId != commad.Id)
+                .Must((command, parentId) => parentId != command.Id)
                     .WithMessage("Cannot be a parent of itself")
                 .When(c => c.ParentCategoryId.HasValue);
         }
